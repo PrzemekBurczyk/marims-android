@@ -1,4 +1,4 @@
-marims-android-lib
+marims-android
 ==================
 
-Mobile Applications Remote Interaction Management System - Android library
+Mobile Applications Remote Interaction Management System - Android
