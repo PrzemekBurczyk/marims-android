@@ -23,7 +23,7 @@ public class MainActivity extends Activity {
         viewPager.setAdapter(adapter);
         viewPager.setPageTransformer(true, new ZoomOutPageTransformer());
 
-        screenIntercepter = new ScreenIntercepter(this);
+        screenIntercepter = new ScreenIntercepter(this, findViewById(android.R.id.content));
 
     }
 

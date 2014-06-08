@@ -11,5 +11,12 @@ Proin tempus, ipsum eget fringilla congue, risus enim venenatis odio, et convall
 Proin nibh erat, tempus id vehicula id, sodales sollicitudin augue. Nulla mollis, magna eget feugiat auctor, dui velit fringilla elit, eget aliquet arcu magna convallis felis. Suspendisse pretium mattis magna, pretium posuere magna pharetra sed. Vivamus at pretium risus, in ornare neque. Aenean eget ultrices eros, sit amet imperdiet arcu. In hac habitasse platea dictumst. Cras mattis lacus purus, vitae volutpat tellus egestas ac.
 Aenean lacinia interdum sem at posuere. Duis pretium ultricies lorem sed suscipit. Nulla fringilla mollis neque at volutpat. Proin rhoncus egestas neque sit amet volutpat. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Maecenas ac quam consequat, laoreet justo eu, porttitor risus. Phasellus aliquam auctor mollis. Ut laoreet condimentum nisl, ac porttitor libero elementum id. Maecenas convallis dignissim tortor. Duis id placerat nisi.
     </string>
+    <string name="main_header">SYSTEM DO ZDALNEGO ZARZĄDZANIA INTERAKCJĄ Z APLIKACJAMI MOBILNYMI</string>
+    <string name="main_secondary_1">dr inż. Michał Korzycki</string>
+    <string name="main_przemek">Przemysław Burczyk</string>
+    <string name="main_bartek">Bartosz Janota</string>
+    <string name="main_jan">Jan Resiak</string>
+    <string name="title_header">Prototyp systemu weryfikujący wymagania i założenia technologiczne</string>
+    <string name="description_header">Proces przetwarzania</string>
 
 </resources>

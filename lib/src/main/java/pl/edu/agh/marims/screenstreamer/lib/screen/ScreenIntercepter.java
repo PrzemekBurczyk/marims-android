@@ -24,13 +24,14 @@ public class ScreenIntercepter {
 
     private boolean initialized = false;
 
-    public ScreenIntercepter(Activity activity) {
+    public ScreenIntercepter(Activity activity, View view) {
         this.activity = activity;
+        this.rootView = view;
     }
 
     public void initialize() {
         try {
-            rootView = activity.findViewById(android.R.id.content).getRootView();
+//            rootView = activity.findViewById(android.R.id.content).getRootView();
 
             rootView.setDrawingCacheEnabled(true);
 
