@@ -48,7 +48,7 @@ public class ScreenIntercepter {
             return null;
         }
         rootView.invalidate();
-        Bitmap bitmap = rootView.getDrawingCache();
+        Bitmap bitmap = rootView.getDrawingCache(true);
         return bitmap;
     }
 
@@ -68,8 +68,20 @@ public class ScreenIntercepter {
         protected Boolean doInBackground(Bitmap... params) {
             Bitmap bitmap = params[0];
 
+            if (bitmap == null) {
+                try {
+                    Thread.sleep(1000);
+                    return true;
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    return false;
+                }
+            }
+
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            float scale = 0.7f;
+            int quality = 50;
+            Bitmap.createScaledBitmap(bitmap, (int) (bitmap.getWidth() * scale), (int) (bitmap.getHeight() * scale), false).compress(Bitmap.CompressFormat.JPEG, quality, baos);
             byte[] byteBuffer = baos.toByteArray();
 
             String bitmapBase64 = Base64.encodeToString(byteBuffer, Base64.NO_WRAP);

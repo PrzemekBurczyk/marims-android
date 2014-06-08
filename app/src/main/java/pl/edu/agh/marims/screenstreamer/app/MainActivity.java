@@ -2,33 +2,28 @@ package pl.edu.agh.marims.screenstreamer.app;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.ImageView;
+import android.support.v13.app.FragmentStatePagerAdapter;
+import android.support.v4.view.ViewPager;
 
 import pl.edu.agh.marims.screenstreamer.lib.screen.ScreenIntercepter;
 
 public class MainActivity extends Activity {
 
     private ScreenIntercepter screenIntercepter;
-    private ImageView imageView;
+    private ViewPager viewPager;
+    private FragmentStatePagerAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        imageView = (ImageView) findViewById(R.id.imageView);
-
-        imageView.setImageResource(R.drawable.cat);
+        viewPager = (ViewPager) findViewById(R.id.pager);
+        adapter = new PresentationPagerAdapter(getFragmentManager());
+        viewPager.setAdapter(adapter);
+        viewPager.setPageTransformer(true, new ZoomOutPageTransformer());
 
         screenIntercepter = new ScreenIntercepter(this);
-
-        findViewById(R.id.bt_initialize).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                screenIntercepter.intercept();
-            }
-        });
 
     }
 
@@ -36,6 +31,7 @@ public class MainActivity extends Activity {
     protected void onResume() {
         super.onResume();
         screenIntercepter.initialize();
+        screenIntercepter.intercept();
     }
 
     @Override
