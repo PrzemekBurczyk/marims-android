@@ -53,12 +53,14 @@ public class ScreenIntercepter {
     }
 
     public void intercept() {
-        if (!initialized) {
-            Toast.makeText(activity, "Initialize first", Toast.LENGTH_SHORT).show();
-            return;
+        if (initialized) {
+            Bitmap bitmap = takeScreenshot();
+            new SendTask().execute(bitmap);
         }
-        Bitmap bitmap = takeScreenshot();
-        new SendTask().execute(bitmap);
+    }
+
+    public void stop() {
+        initialized = false;
     }
 
     private class SendTask extends AsyncTask<Bitmap, Void, Boolean> {
@@ -77,7 +79,7 @@ public class ScreenIntercepter {
             Log.d("REQUEST", "Post length: " + postString.length());
 
             HttpClient httpClient = new DefaultHttpClient();
-            HttpPost httpPost = new HttpPost("http://192.168.137.1:5000/upload");
+            HttpPost httpPost = new HttpPost("http://marims-backend.herokuapp.com/upload");
             try {
                 httpPost.setHeader("Content-Type", "application/json");
                 httpPost.setEntity(new StringEntity(postString));

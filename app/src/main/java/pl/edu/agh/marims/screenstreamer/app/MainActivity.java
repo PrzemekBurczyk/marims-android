@@ -37,4 +37,10 @@ public class MainActivity extends Activity {
         super.onResume();
         screenIntercepter.initialize();
     }
+
+    @Override
+    protected void onPause() {
+        screenIntercepter.stop();
+        super.onPause();
+    }
 }
