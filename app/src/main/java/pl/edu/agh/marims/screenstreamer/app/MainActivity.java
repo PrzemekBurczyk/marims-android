@@ -9,6 +9,8 @@ import pl.edu.agh.marims.screenstreamer.lib.screen.ScreenIntercepter;
 
 public class MainActivity extends Activity {
 
+    private static final String SERVER_URL = "http://marims-backend.herokuapp.com/upload";
+
     private ScreenIntercepter screenIntercepter;
     private ViewPager viewPager;
     private FragmentStatePagerAdapter adapter;
@@ -23,7 +25,7 @@ public class MainActivity extends Activity {
         viewPager.setAdapter(adapter);
         viewPager.setPageTransformer(true, new ZoomOutPageTransformer());
 
-        screenIntercepter = new ScreenIntercepter(this, findViewById(android.R.id.content));
+        screenIntercepter = new ScreenIntercepter(this, findViewById(android.R.id.content), SERVER_URL);
 
     }
 
