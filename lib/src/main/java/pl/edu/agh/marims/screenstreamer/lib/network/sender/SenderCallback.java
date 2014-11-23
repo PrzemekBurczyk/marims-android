@@ -1,4 +1,4 @@
-package pl.edu.agh.marims.screenstreamer.lib.network;
+package pl.edu.agh.marims.screenstreamer.lib.network.sender;
 
 public interface SenderCallback {
     public void onSuccess();

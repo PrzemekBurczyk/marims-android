@@ -1,4 +1,4 @@
-package pl.edu.agh.marims.screenstreamer.lib.network;
+package pl.edu.agh.marims.screenstreamer.lib.network.sender;
 
 import android.graphics.Bitmap;
 import android.os.AsyncTask;

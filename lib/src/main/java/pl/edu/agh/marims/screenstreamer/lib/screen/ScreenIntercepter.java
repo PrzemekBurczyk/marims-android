@@ -8,8 +8,8 @@ import android.view.View;
 import android.widget.Toast;
 
 import pl.edu.agh.marims.screenstreamer.lib.measurement.Measurer;
-import pl.edu.agh.marims.screenstreamer.lib.network.AbstractSender;
-import pl.edu.agh.marims.screenstreamer.lib.network.SocketIOSender;
+import pl.edu.agh.marims.screenstreamer.lib.network.sender.AbstractSender;
+import pl.edu.agh.marims.screenstreamer.lib.network.sender.AsyncTaskSender;
 
 public class ScreenIntercepter implements Intercepter {
 
@@ -25,18 +25,13 @@ public class ScreenIntercepter implements Intercepter {
         this.activity = activity;
         this.rootView = view;
 
-//        sender = new AsyncTaskSender(this, serverUrl);
-//        sender = new SocketIOSender(this, "http://marims-backend.herokuapp.com");
-        sender = new SocketIOSender(this, "http://192.168.0.14/");
-        //measurer = new Measurer(sender);
+        sender = new AsyncTaskSender(this, serverUrl);
+        measurer = new Measurer(sender);
     }
 
     public void initialize() {
         try {
-//            rootView = activity.findViewById(android.R.id.content).getRootView();
-
             rootView.setDrawingCacheEnabled(true);
-
             initialized = true;
         } catch (NullPointerException e) {
             Toast.makeText(activity, "Wasn't able to initialize", Toast.LENGTH_SHORT).show();
@@ -55,6 +50,7 @@ public class ScreenIntercepter implements Intercepter {
         return rootView.getDrawingCache(true);
     }
 
+    @Override
     public void intercept() {
         if (initialized) {
             handler.postDelayed(new Runnable() {

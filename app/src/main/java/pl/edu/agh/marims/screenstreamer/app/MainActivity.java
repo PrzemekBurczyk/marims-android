@@ -27,7 +27,6 @@ public class MainActivity extends Activity {
         viewPager.setPageTransformer(true, new ZoomOutPageTransformer());
 
         screenIntercepter = new ScreenIntercepter(this, findViewById(android.R.id.content), SERVER_URL);
-
     }
 
     @Override

@@ -1,7 +1,7 @@
 package pl.edu.agh.marims.screenstreamer.lib.measurement;
 
-import pl.edu.agh.marims.screenstreamer.lib.network.AbstractSender;
-import pl.edu.agh.marims.screenstreamer.lib.network.SenderCallback;
+import pl.edu.agh.marims.screenstreamer.lib.network.sender.AbstractSender;
+import pl.edu.agh.marims.screenstreamer.lib.network.sender.SenderCallback;
 
 public class Measurer {
 
