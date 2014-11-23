@@ -9,12 +9,11 @@ import android.widget.Toast;
 import java.util.Map;
 
 import pl.edu.agh.marims.screenstreamer.lib.intent.IntentReader;
-import pl.edu.agh.marims.screenstreamer.lib.screen.ScreenIntercepter;
+import pl.edu.agh.marims.screenstreamer.lib.screen.intercepter.ScreenIntercepter;
 
 public class MainActivity extends Activity {
 
-    private static final String SERVER_URL = "http://marims-backend.herokuapp.com/upload";
-//    private static final String SERVER_URL = "http://192.168.0.14/upload";
+    private static final String SERVER_URL = "http://marims-backend.herokuapp.com";
 
     private ScreenIntercepter screenIntercepter;
     private ViewPager viewPager;
@@ -40,8 +39,7 @@ public class MainActivity extends Activity {
 
     private void showIntentToast(Map<String, String> intentParams) {
         if (!intentParams.isEmpty()) {
-            Toast.makeText(this.getApplicationContext(), IntentReader.printIntentParams(intentParams),
-                    Toast.LENGTH_LONG).show();
+            Toast.makeText(this.getApplicationContext(), IntentReader.printIntentParams(intentParams), Toast.LENGTH_LONG).show();
         }
     }
 

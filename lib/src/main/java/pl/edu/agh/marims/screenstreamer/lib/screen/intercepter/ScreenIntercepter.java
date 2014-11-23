@@ -1,4 +1,4 @@
-package pl.edu.agh.marims.screenstreamer.lib.screen;
+package pl.edu.agh.marims.screenstreamer.lib.screen.intercepter;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
@@ -14,6 +14,7 @@ import pl.edu.agh.marims.screenstreamer.lib.network.sender.AbstractSender;
 import pl.edu.agh.marims.screenstreamer.lib.network.sender.AsyncTaskSender;
 
 public class ScreenIntercepter implements Intercepter {
+    private static final String UPLOAD_ENDPOINT = "/upload";
 
     private static final int MEASURE_INTERVAL = 5000;
     private Activity activity;
@@ -29,7 +30,7 @@ public class ScreenIntercepter implements Intercepter {
         this.rootView = view;
         this.intentParams = intentParams;
 
-        sender = new AsyncTaskSender(this, serverUrl);
+        sender = new AsyncTaskSender(this, serverUrl + UPLOAD_ENDPOINT);
         measurer = new Measurer(sender);
     }
 

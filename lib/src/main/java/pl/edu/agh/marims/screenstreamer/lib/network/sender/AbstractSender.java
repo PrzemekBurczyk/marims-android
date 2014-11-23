@@ -1,6 +1,6 @@
 package pl.edu.agh.marims.screenstreamer.lib.network.sender;
 
-import pl.edu.agh.marims.screenstreamer.lib.screen.Intercepter;
+import pl.edu.agh.marims.screenstreamer.lib.screen.intercepter.Intercepter;
 
 public abstract class AbstractSender {
 

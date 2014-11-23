@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 import pl.edu.agh.marims.screenstreamer.lib.convert.BitmapToBase64Converter;
-import pl.edu.agh.marims.screenstreamer.lib.screen.Intercepter;
+import pl.edu.agh.marims.screenstreamer.lib.screen.intercepter.Intercepter;
 
 public class AsyncTaskSender extends AbstractSender {
 

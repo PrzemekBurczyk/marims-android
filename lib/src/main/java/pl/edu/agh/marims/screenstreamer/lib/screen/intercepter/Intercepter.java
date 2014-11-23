@@ -1,4 +1,4 @@
-package pl.edu.agh.marims.screenstreamer.lib.screen;
+package pl.edu.agh.marims.screenstreamer.lib.screen.intercepter;
 
 
 import android.graphics.Bitmap;
