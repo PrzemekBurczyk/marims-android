@@ -4,18 +4,21 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.view.View;
 import android.widget.Toast;
 
 import java.util.Map;
 
 import pl.edu.agh.marims.screenstreamer.lib.intent.IntentReader;
 import pl.edu.agh.marims.screenstreamer.lib.screen.intercepter.ScreenIntercepter;
+import pl.edu.agh.marims.screenstreamer.lib.screen.manipulator.ScreenManipulator;
 
 public class MainActivity extends Activity {
 
     private static final String SERVER_URL = "http://marims-backend.herokuapp.com";
 
     private ScreenIntercepter screenIntercepter;
+    private ScreenManipulator screenManipulator;
     private ViewPager viewPager;
     private FragmentStatePagerAdapter adapter;
 
@@ -33,7 +36,9 @@ public class MainActivity extends Activity {
 
         showIntentToast(intentParams);
 
-        screenIntercepter = new ScreenIntercepter(this, findViewById(android.R.id.content), SERVER_URL, intentParams);
+        View view = findViewById(android.R.id.content);
+        screenIntercepter = new ScreenIntercepter(this, view, SERVER_URL, intentParams);
+        screenManipulator = new ScreenManipulator(this, view, SERVER_URL, intentParams);
 
     }
 
@@ -48,11 +53,13 @@ public class MainActivity extends Activity {
         super.onResume();
         screenIntercepter.initialize();
         screenIntercepter.intercept();
+        screenManipulator.initialize();
     }
 
     @Override
     protected void onPause() {
         screenIntercepter.stop();
+        screenManipulator.stop();
         super.onPause();
     }
 }

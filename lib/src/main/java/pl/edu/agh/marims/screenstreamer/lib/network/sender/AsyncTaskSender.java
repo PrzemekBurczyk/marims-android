@@ -8,12 +8,15 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 import pl.edu.agh.marims.screenstreamer.lib.convert.BitmapToBase64Converter;
 import pl.edu.agh.marims.screenstreamer.lib.screen.intercepter.Intercepter;
+import pl.edu.agh.marims.screenstreamer.lib.screen.intercepter.ScreenIntercepter;
 
 public class AsyncTaskSender extends AbstractSender {
 
@@ -56,7 +59,18 @@ public class AsyncTaskSender extends AbstractSender {
                 }
             }
 
-            String postString = "{ \"image\": \"" + converter.convert(bitmap) + "\"}";
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put("sessionId", ScreenIntercepter.SESSION_ID);
+                jsonObject.put("screenWidth", bitmap.getWidth());
+                jsonObject.put("screenHeight", bitmap.getHeight());
+                jsonObject.put("image", converter.convert(bitmap));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            String postString = jsonObject.toString();
+//            String postString = "{ \"sessionId\": \"" + ScreenIntercepter.SESSION_ID + "\", \"image\": \"" + converter.convert(bitmap) + "\"}";
 
             Log.d("REQUEST", "Post length: " + postString.length());
 

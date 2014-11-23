@@ -14,8 +14,8 @@ import pl.edu.agh.marims.screenstreamer.lib.network.sender.AbstractSender;
 import pl.edu.agh.marims.screenstreamer.lib.network.sender.AsyncTaskSender;
 
 public class ScreenIntercepter implements Intercepter {
+    public static final String SESSION_ID = "123e4567-e89b-12d3-a456-426655440000";
     private static final String UPLOAD_ENDPOINT = "/upload";
-
     private static final int MEASURE_INTERVAL = 5000;
     private Activity activity;
     private View rootView;
