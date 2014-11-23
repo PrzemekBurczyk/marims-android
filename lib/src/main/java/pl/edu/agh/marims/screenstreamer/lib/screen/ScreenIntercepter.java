@@ -9,7 +9,7 @@ import android.widget.Toast;
 
 import pl.edu.agh.marims.screenstreamer.lib.measurement.Measurer;
 import pl.edu.agh.marims.screenstreamer.lib.network.AbstractSender;
-import pl.edu.agh.marims.screenstreamer.lib.network.AsyncTaskSender;
+import pl.edu.agh.marims.screenstreamer.lib.network.SocketIOSender;
 
 public class ScreenIntercepter implements Intercepter {
 
@@ -25,15 +25,10 @@ public class ScreenIntercepter implements Intercepter {
         this.activity = activity;
         this.rootView = view;
 
-        sender = new AsyncTaskSender(this);
-        measurer = new Measurer(sender);
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Log.d("MEASURER", measurer.getStatistics().toString());
-                handler.postDelayed(this, MEASURE_INTERVAL);
-            }
-        }, MEASURE_INTERVAL);
+//        sender = new AsyncTaskSender(this, serverUrl);
+//        sender = new SocketIOSender(this, "http://marims-backend.herokuapp.com");
+        sender = new SocketIOSender(this, "http://192.168.0.14/");
+        //measurer = new Measurer(sender);
     }
 
     public void initialize() {
@@ -62,12 +57,25 @@ public class ScreenIntercepter implements Intercepter {
 
     public void intercept() {
         if (initialized) {
-            sender.send();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (measurer != null) {
+                        Log.d("MEASURER", measurer.getStatistics().toString());
+                    }
+                    if (initialized) {
+                        handler.postDelayed(this, MEASURE_INTERVAL);
+                    }
+                }
+            }, MEASURE_INTERVAL);
+
+            sender.startSending();
         }
     }
 
     public void stop() {
         initialized = false;
+        sender.stopSending();
     }
 
 }

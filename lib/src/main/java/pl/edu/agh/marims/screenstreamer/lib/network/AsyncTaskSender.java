@@ -31,10 +31,12 @@ public class AsyncTaskSender extends AbstractSender {
     }
 
     @Override
-    public void send() {
-        if (senderCallback != null) {
-            senderCallback.onSend();
-        }
+    public void startSending() {
+        super.startSending();
+        send();
+    }
+
+    private void send() {
         new Sender().execute(intercepter.takeScreenshot());
     }
 
@@ -83,7 +85,9 @@ public class AsyncTaskSender extends AbstractSender {
                 if (senderCallback != null) {
                     senderCallback.onSuccess();
                 }
-                send();
+                if (runSending) {
+                    send();
+                }
             } else {
                 if (senderCallback != null) {
                     senderCallback.onFailure();

@@ -9,7 +9,8 @@ import pl.edu.agh.marims.screenstreamer.lib.screen.ScreenIntercepter;
 
 public class MainActivity extends Activity {
 
-    private static final String SERVER_URL = "http://marims-backend.herokuapp.com/upload";
+    //    private static final String SERVER_URL = "http://marims-backend.herokuapp.com/upload";
+    private static final String SERVER_URL = "http://192.168.0.14/upload";
 
     private ScreenIntercepter screenIntercepter;
     private ViewPager viewPager;

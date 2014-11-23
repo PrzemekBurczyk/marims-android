@@ -6,4 +6,8 @@ public interface SenderCallback {
     public void onFailure();
 
     public void onSend();
+
+    public void onStart();
+
+    public void onStop();
 }

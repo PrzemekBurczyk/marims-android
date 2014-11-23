@@ -29,10 +29,17 @@ public class Measurer {
 
             @Override
             public void onSend() {
-                if (!started) {
-                    started = true;
-                    start = System.currentTimeMillis();
-                }
+            }
+
+            @Override
+            public void onStart() {
+                started = true;
+                start = System.currentTimeMillis();
+            }
+
+            @Override
+            public void onStop() {
+                started = false;
             }
         });
     }
