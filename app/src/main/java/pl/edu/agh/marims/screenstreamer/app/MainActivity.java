@@ -4,7 +4,11 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.widget.Toast;
 
+import java.util.Map;
+
+import pl.edu.agh.marims.screenstreamer.lib.intent.IntentReader;
 import pl.edu.agh.marims.screenstreamer.lib.screen.ScreenIntercepter;
 
 public class MainActivity extends Activity {
@@ -26,8 +30,19 @@ public class MainActivity extends Activity {
         viewPager.setAdapter(adapter);
         viewPager.setPageTransformer(true, new ZoomOutPageTransformer());
 
-        screenIntercepter = new ScreenIntercepter(this, findViewById(android.R.id.content), SERVER_URL);
+        Map<String, String> intentParams = IntentReader.readIntentParams(getIntent());
 
+        showIntentToast(intentParams);
+
+        screenIntercepter = new ScreenIntercepter(this, findViewById(android.R.id.content), SERVER_URL, intentParams);
+
+    }
+
+    private void showIntentToast(Map<String, String> intentParams) {
+        if (!intentParams.isEmpty()) {
+            Toast.makeText(this.getApplicationContext(), IntentReader.printIntentParams(intentParams),
+                    Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
