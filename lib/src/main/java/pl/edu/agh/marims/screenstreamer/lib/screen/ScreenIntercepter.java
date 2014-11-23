@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import java.util.Map;
+
 import pl.edu.agh.marims.screenstreamer.lib.measurement.Measurer;
 import pl.edu.agh.marims.screenstreamer.lib.network.AbstractSender;
 import pl.edu.agh.marims.screenstreamer.lib.network.SocketIOSender;
@@ -16,14 +18,16 @@ public class ScreenIntercepter implements Intercepter {
     private static final int MEASURE_INTERVAL = 5000;
     private Activity activity;
     private View rootView;
+    private Map<String, String> intentParams;
     private boolean initialized = false;
     private AbstractSender sender;
     private Measurer measurer;
     private Handler handler = new Handler();
 
-    public ScreenIntercepter(final Activity activity, final View view, String serverUrl) {
+    public ScreenIntercepter(final Activity activity, final View view, String serverUrl, Map<String, String> intentParams) {
         this.activity = activity;
         this.rootView = view;
+        this.intentParams = intentParams;
 
 //        sender = new AsyncTaskSender(this, serverUrl);
 //        sender = new SocketIOSender(this, "http://marims-backend.herokuapp.com");
