@@ -23,13 +23,14 @@ public class IntentReader {
     /**
      * Important!
      * Remember to declare a special intent in your app manifest file, it should look like this:
-     * <intent-filter>
-     * <action android:name="android.intent.action.VIEW"/>
-     * <category android:name="android.intent.category.DEFAULT"/>
-     * <category android:name="android.intent.category.BROWSABLE"/>
-     * <data android:host="runAppWith" android:scheme="marims"/>
-     * </intent-filter>
-     * <p/>
+     *
+     *  <intent-filter>
+     *      <action android:name="android.intent.action.VIEW"/>
+     *      <category android:name="android.intent.category.DEFAULT"/>
+     *      <category android:name="android.intent.category.BROWSABLE"/>
+     *      <data android:host="runAppWith" android:scheme="marims"/>
+     *  </intent-filter>
+     *
      * Given declaration allows Android System to run your app via URI
      * (e.g. marims://runAppWith?param1=value1&param2=value2)
      *
