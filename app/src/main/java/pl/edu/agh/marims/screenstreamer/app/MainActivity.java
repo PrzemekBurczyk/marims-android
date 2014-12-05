@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -23,9 +25,24 @@ public class MainActivity extends Activity {
     private FragmentStatePagerAdapter adapter;
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add("Manipulate");
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onMenuItemSelected(int featureId, MenuItem item) {
+        if (screenManipulator != null) {
+            screenManipulator.manipulate(null);
+        }
+        return true;
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         viewPager = (ViewPager) findViewById(R.id.pager);
         adapter = new PresentationPagerAdapter(getFragmentManager());
@@ -37,6 +54,7 @@ public class MainActivity extends Activity {
         showIntentToast(intentParams);
 
         View view = findViewById(android.R.id.content);
+
         screenIntercepter = new ScreenIntercepter(this, view, SERVER_URL, intentParams);
         screenManipulator = new ScreenManipulator(this, view, SERVER_URL, intentParams);
 
