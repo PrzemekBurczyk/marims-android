@@ -8,6 +8,13 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+
 import pl.edu.agh.marims.screenstreamer.lib.convert.BitmapToBase64Converter;
 import pl.edu.agh.marims.screenstreamer.lib.screen.intercepter.Intercepter;
 import pl.edu.agh.marims.screenstreamer.lib.screen.intercepter.ScreenIntercepter;
@@ -36,6 +43,8 @@ public class UdpSocketSender extends AbstractSender {
 
     private class SenderWorker extends Thread {
 
+        private InetAddress address;
+        private DatagramSocket socket;
         private Bitmap bitmap;
         private long lastScreenshotVersion;
         private long screenshotVersion = Long.MIN_VALUE;
@@ -44,31 +53,50 @@ public class UdpSocketSender extends AbstractSender {
         @Override
         public void run() {
             lastScreenshotVersion = screenshotVersion;
+            try {
+                socket = new DatagramSocket(6666);
+                address = InetAddress.getByName("192.168.0.11");
+            } catch (SocketException e) {
+                e.printStackTrace();
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            }
             while (runSending) {
                 if (!loadInProgress) {
-                    send();
+                    try {
+                        send();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     load();
                 }
             }
         }
 
-        private void send() {
+        private void send() throws IOException {
             if (lastScreenshotVersion != screenshotVersion) {
-                JSONObject jsonObject = new JSONObject();
-                try {
-                    jsonObject.put("sessionId", ScreenIntercepter.SESSION_ID);
-                    jsonObject.put("screenWidth", bitmap.getWidth());
-                    jsonObject.put("screenHeight", bitmap.getHeight());
-                    jsonObject.put("image", converter.convert(bitmap));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                byte[] payload = buildPayload().getBytes();
+                Log.d("REQUEST", "Post length: " + payload.length);
 
-                String postString = jsonObject.toString();
-                Log.d("REQUEST", "Post length: " + postString.length());
+                DatagramPacket packet = new DatagramPacket(payload, payload.length, address, 6666);
+                socket.send(packet);
 
                 lastScreenshotVersion = screenshotVersion;
             }
+        }
+
+        private String buildPayload() {
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put("sessionId", ScreenIntercepter.SESSION_ID);
+                jsonObject.put("screenWidth", bitmap.getWidth());
+                jsonObject.put("screenHeight", bitmap.getHeight());
+                jsonObject.put("image", converter.convert(bitmap));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return jsonObject.toString();
         }
 
         private void load() {
