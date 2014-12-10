@@ -28,11 +28,6 @@ public class AsyncTaskSender extends AbstractSender {
         this.converter = new BitmapToBase64Converter();
     }
 
-    public AsyncTaskSender(Intercepter intercepter, String serverUrl, SenderCallback senderCallback) {
-        this(intercepter, serverUrl);
-        this.senderCallback = senderCallback;
-    }
-
     @Override
     public void startSending() {
         super.startSending();

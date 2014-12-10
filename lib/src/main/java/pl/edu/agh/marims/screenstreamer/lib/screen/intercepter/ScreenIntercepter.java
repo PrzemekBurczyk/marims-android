@@ -3,7 +3,6 @@ package pl.edu.agh.marims.screenstreamer.lib.screen.intercepter;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -11,7 +10,7 @@ import java.util.Map;
 
 import pl.edu.agh.marims.screenstreamer.lib.measurement.Measurer;
 import pl.edu.agh.marims.screenstreamer.lib.network.sender.AbstractSender;
-import pl.edu.agh.marims.screenstreamer.lib.network.sender.AsyncTaskSender;
+import pl.edu.agh.marims.screenstreamer.lib.network.sender.UdpSocketSender;
 
 public class ScreenIntercepter implements Intercepter {
     public static final String SESSION_ID = "123e4567-e89b-12d3-a456-426655440000";
@@ -30,7 +29,8 @@ public class ScreenIntercepter implements Intercepter {
         this.rootView = view;
         this.intentParams = intentParams;
 
-        sender = new AsyncTaskSender(this, serverUrl + UPLOAD_ENDPOINT);
+//        sender = new AsyncTaskSender(this, serverUrl + UPLOAD_ENDPOINT);
+        sender = new UdpSocketSender(this, serverUrl + UPLOAD_ENDPOINT);
         measurer = new Measurer(sender);
     }
 
@@ -58,17 +58,17 @@ public class ScreenIntercepter implements Intercepter {
     @Override
     public void intercept() {
         if (initialized) {
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if (measurer != null) {
-                        Log.d("MEASURER", measurer.getStatistics().toString());
-                    }
-                    if (initialized) {
-                        handler.postDelayed(this, MEASURE_INTERVAL);
-                    }
-                }
-            }, MEASURE_INTERVAL);
+//            handler.postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    if (measurer != null) {
+//                        Log.d("MEASURER", measurer.getStatistics().toString());
+//                    }
+//                    if (initialized) {
+//                        handler.postDelayed(this, MEASURE_INTERVAL);
+//                    }
+//                }
+//            }, MEASURE_INTERVAL);
 
             sender.startSending();
         }

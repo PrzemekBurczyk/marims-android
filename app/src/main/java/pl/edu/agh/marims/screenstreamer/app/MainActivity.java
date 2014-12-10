@@ -7,6 +7,7 @@ import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import java.util.Map;
@@ -42,7 +43,7 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         viewPager = (ViewPager) findViewById(R.id.pager);
         adapter = new PresentationPagerAdapter(getFragmentManager());
@@ -71,13 +72,13 @@ public class MainActivity extends Activity {
         super.onResume();
         screenIntercepter.initialize();
         screenIntercepter.intercept();
-        screenManipulator.initialize();
+//        screenManipulator.initialize();
     }
 
     @Override
     protected void onPause() {
         screenIntercepter.stop();
-        screenManipulator.stop();
+//        screenManipulator.stop();
         super.onPause();
     }
 }
