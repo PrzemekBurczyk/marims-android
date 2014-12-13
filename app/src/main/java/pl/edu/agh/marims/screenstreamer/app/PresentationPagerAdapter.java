@@ -10,6 +10,14 @@ import android.support.v13.app.FragmentStatePagerAdapter;
 public class PresentationPagerAdapter extends FragmentStatePagerAdapter {
 
     private static final int PAGES_COUNT = 6;
+    private static final Fragment[] FRAGMENTS = {
+            new MainFragment(),
+            new TitleFragment(),
+            new DescriptionFragment(),
+            new PageFragment(),
+            new PageFragment(),
+            new PageFragment()
+    };
 
     public PresentationPagerAdapter(FragmentManager fm) {
         super(fm);
@@ -17,16 +25,7 @@ public class PresentationPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        switch (position) {
-            case 0:
-                return new MainFragment();
-            case 1:
-                return new TitleFragment();
-            case 2:
-                return new DescriptionFragment();
-            default:
-                return new PageFragment();
-        }
+        return FRAGMENTS[position];
     }
 
     @Override

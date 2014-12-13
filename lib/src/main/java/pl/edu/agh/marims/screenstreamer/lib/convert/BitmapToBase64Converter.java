@@ -7,12 +7,19 @@ import java.io.ByteArrayOutputStream;
 
 public class BitmapToBase64Converter extends BitmapConverter<String> {
 
+    private static final float MAX_DIMENSION = 900.0f;
+
     @Override
     public String convert(Bitmap bitmap) {
         if (bitmap != null) {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            float scale = 0.7f;
-            int quality = 50;
+            float scale;
+            if (bitmap.getWidth() < bitmap.getHeight()) {
+                scale = MAX_DIMENSION / (float) bitmap.getHeight();
+            } else {
+                scale = MAX_DIMENSION / (float) bitmap.getWidth();
+            }
+            int quality = 60;
             Bitmap.createScaledBitmap(bitmap, (int) (bitmap.getWidth() * scale), (int) (bitmap.getHeight() * scale), false).compress(Bitmap.CompressFormat.JPEG, quality, baos);
             byte[] byteBuffer = baos.toByteArray();
 

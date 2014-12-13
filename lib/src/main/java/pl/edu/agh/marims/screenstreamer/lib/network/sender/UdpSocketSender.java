@@ -5,6 +5,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
+import com.koushikdutta.async.http.libcore.Charsets;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -48,6 +50,7 @@ public class UdpSocketSender extends AbstractSender {
     private class SenderWorker extends Thread {
 
         private static final int MAX_SIZE = 65000;
+//        private static final int MAX_SIZE = 10000;
 
         private InetAddress address;
         private DatagramSocket socket;
@@ -60,13 +63,16 @@ public class UdpSocketSender extends AbstractSender {
         public void run() {
             lastScreenshotVersion = screenshotVersion;
             try {
-                socket = new DatagramSocket(5000);
-                address = InetAddress.getByName("192.168.0.11");
+                socket = new DatagramSocket();
+                address = InetAddress.getByName("54.93.32.50");
+//                address = InetAddress.getByName("192.168.0.11");
                 while (runSending) {
                     if (!loadInProgress) {
                         try {
                             send();
                         } catch (IOException e) {
+                            e.printStackTrace();
+                        } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
                         load();
@@ -82,7 +88,7 @@ public class UdpSocketSender extends AbstractSender {
             }
         }
 
-        private void send() throws IOException {
+        private void send() throws IOException, InterruptedException {
             if (lastScreenshotVersion != screenshotVersion) {
                 List<byte[]> payloads = buildPayloads();
 
@@ -96,8 +102,11 @@ public class UdpSocketSender extends AbstractSender {
 
                 for (int i = 0; i < payloads.size(); i++) {
                     byte[] payload = payloads.get(i);
-                    DatagramPacket packet = new DatagramPacket(payload, payload.length, address, 5000);
+                    DatagramPacket packet = new DatagramPacket(payload, payload.length, address, 6666);
                     socket.send(packet);
+                    if (payloads.size() > 2) {
+                        Thread.sleep(50);
+                    }
                 }
 
                 lastScreenshotVersion = screenshotVersion;
@@ -133,10 +142,13 @@ public class UdpSocketSender extends AbstractSender {
                 if (DEBUG) {
                     Log.d("REQUEST", "from: " + from + " to: " + to + " length: " + length);
                 }
-                byte[] payload = new byte[length + 2];
-                System.arraycopy(data, from, payload, 2, length);
+                byte[] payload = new byte[length + 39];
+                System.arraycopy(data, from, payload, 39, length);
                 payload[0] = (byte) (i + 1);
                 payload[1] = payloadsCount;
+                payload[2] = (byte) screenshotVersion;
+                byte[] sessionId = ScreenIntercepter.SESSION_ID.getBytes(Charsets.US_ASCII);
+                System.arraycopy(sessionId, 0, payload, 3, sessionId.length);
                 payloads.add(payload);
             }
             return payloads;

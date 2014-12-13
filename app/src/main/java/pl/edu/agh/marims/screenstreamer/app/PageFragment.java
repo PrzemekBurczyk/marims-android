@@ -29,6 +29,13 @@ public class PageFragment extends Fragment {
                     Toast.makeText(getActivity(), "Clicked", Toast.LENGTH_SHORT).show();
                 }
             });
+            view.findViewById(id).setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    Toast.makeText(getActivity(), "Long clicked", Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+            });
 
         }
 

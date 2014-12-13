@@ -18,7 +18,7 @@ import pl.edu.agh.marims.screenstreamer.lib.screen.manipulator.ScreenManipulator
 
 public class MainActivity extends Activity {
 
-    private static final String SERVER_URL = "http://marims-backend.herokuapp.com";
+    private static final String SERVER_URL = "http://ec2-54-93-32-50.eu-central-1.compute.amazonaws.com";
 
     private ScreenIntercepter screenIntercepter;
     private ScreenManipulator screenManipulator;
@@ -46,6 +46,7 @@ public class MainActivity extends Activity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         viewPager = (ViewPager) findViewById(R.id.pager);
+        viewPager.setOffscreenPageLimit(5);
         adapter = new PresentationPagerAdapter(getFragmentManager());
         viewPager.setAdapter(adapter);
         viewPager.setPageTransformer(true, new ZoomOutPageTransformer());

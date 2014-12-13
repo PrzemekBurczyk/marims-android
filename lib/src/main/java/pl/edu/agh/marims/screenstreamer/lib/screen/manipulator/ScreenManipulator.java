@@ -55,7 +55,7 @@ public class ScreenManipulator implements Manipulator {
     @Override
     public void manipulate(MouseEvent mouseEvent) {
         MotionEvent event = null;
-        long uptime = 0;
+        long uptime;
         switch (mouseEvent.event) {
             case MOUSE_DOWN:
                 lastDownUptime = SystemClock.uptimeMillis();
@@ -72,18 +72,10 @@ public class ScreenManipulator implements Manipulator {
                 break;
         }
         view.dispatchTouchEvent(event);
-//        int BEGIN = 1300;
-//        int END = 1000;
-//        long START_TIME = SystemClock.uptimeMillis();
-//        view.dispatchTouchEvent(MotionEvent.obtain(START_TIME, SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 400, BEGIN, 0));
-//        for (int i = BEGIN; i >= END; i--) {
-//            view.dispatchTouchEvent(MotionEvent.obtain(START_TIME, SystemClock.uptimeMillis(), MotionEvent.ACTION_MOVE, 400, i, 0));
-//        }
-//        view.dispatchTouchEvent(MotionEvent.obtain(START_TIME, SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 400, END, 0));
     }
 
     public void stop() {
-//        this.receiver.stopReceiving();
+        this.receiver.stopReceiving();
     }
 
 }
