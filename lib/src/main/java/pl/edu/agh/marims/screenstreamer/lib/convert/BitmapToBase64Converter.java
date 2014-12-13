@@ -19,7 +19,7 @@ public class BitmapToBase64Converter extends BitmapConverter<String> {
             } else {
                 scale = MAX_DIMENSION / (float) bitmap.getWidth();
             }
-            int quality = 60;
+            int quality = 50;
             Bitmap.createScaledBitmap(bitmap, (int) (bitmap.getWidth() * scale), (int) (bitmap.getHeight() * scale), false).compress(Bitmap.CompressFormat.JPEG, quality, baos);
             byte[] byteBuffer = baos.toByteArray();
 

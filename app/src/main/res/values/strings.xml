@@ -19,4 +19,14 @@ Aenean lacinia interdum sem at posuere. Duis pretium ultricies lorem sed suscipi
     <string name="title_header">Prototyp systemu weryfikujący wymagania i założenia technologiczne</string>
     <string name="description_header">Proces przetwarzania</string>
 
+    <string-array name="planets_array">
+        <item>Mercury</item>
+        <item>Venus</item>
+        <item>Earth</item>
+        <item>Mars</item>
+        <item>Jupiter</item>
+        <item>Saturn</item>
+        <item>Uranus</item>
+        <item>Neptune</item>
+    </string-array>
 </resources>

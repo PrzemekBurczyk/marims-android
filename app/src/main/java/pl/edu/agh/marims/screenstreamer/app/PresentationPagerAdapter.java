@@ -9,12 +9,12 @@ import android.support.v13.app.FragmentStatePagerAdapter;
  */
 public class PresentationPagerAdapter extends FragmentStatePagerAdapter {
 
-    private static final int PAGES_COUNT = 6;
+    private static final int PAGES_COUNT = 2;
     private static final Fragment[] FRAGMENTS = {
-            new MainFragment(),
-            new TitleFragment(),
-            new DescriptionFragment(),
-            new PageFragment(),
+//            new MainFragment(),
+//            new TitleFragment(),
+//            new DescriptionFragment(),
+//            new PageFragment(),
             new PageFragment(),
             new PageFragment()
     };

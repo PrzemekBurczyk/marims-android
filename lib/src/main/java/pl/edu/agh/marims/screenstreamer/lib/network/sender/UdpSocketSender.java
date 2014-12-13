@@ -50,7 +50,6 @@ public class UdpSocketSender extends AbstractSender {
     private class SenderWorker extends Thread {
 
         private static final int MAX_SIZE = 65000;
-//        private static final int MAX_SIZE = 10000;
 
         private InetAddress address;
         private DatagramSocket socket;
@@ -64,8 +63,7 @@ public class UdpSocketSender extends AbstractSender {
             lastScreenshotVersion = screenshotVersion;
             try {
                 socket = new DatagramSocket();
-                address = InetAddress.getByName("54.93.32.50");
-//                address = InetAddress.getByName("192.168.0.11");
+                address = InetAddress.getByName(serverUrl.replaceFirst("http://", ""));
                 while (runSending) {
                     if (!loadInProgress) {
                         try {

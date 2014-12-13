@@ -34,7 +34,7 @@ public class MainActivity extends Activity {
     @Override
     public boolean onMenuItemSelected(int featureId, MenuItem item) {
         if (screenManipulator != null) {
-            screenManipulator.manipulate(null);
+//            screenManipulator.manipulate(null);
         }
         return true;
     }
@@ -46,7 +46,6 @@ public class MainActivity extends Activity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         viewPager = (ViewPager) findViewById(R.id.pager);
-        viewPager.setOffscreenPageLimit(5);
         adapter = new PresentationPagerAdapter(getFragmentManager());
         viewPager.setAdapter(adapter);
         viewPager.setPageTransformer(true, new ZoomOutPageTransformer());
@@ -73,13 +72,13 @@ public class MainActivity extends Activity {
         super.onResume();
         screenIntercepter.initialize();
         screenIntercepter.intercept();
-//        screenManipulator.initialize();
+        screenManipulator.initialize();
     }
 
     @Override
     protected void onPause() {
         screenIntercepter.stop();
-//        screenManipulator.stop();
+        screenManipulator.stop();
         super.onPause();
     }
 }
