@@ -28,7 +28,7 @@ import pl.edu.agh.marims.screenstreamer.lib.screen.intercepter.ScreenIntercepter
  */
 public class UdpSocketSender extends AbstractSender {
 
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
 
     private Handler mainLooper = new Handler(Looper.getMainLooper());
     private BitmapToBase64Converter converter;

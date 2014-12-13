@@ -31,7 +31,7 @@ public class PageFragment extends Fragment {
                     public void run() {
                         ((TextView) view.findViewById(R.id.textView)).setText("");
                     }
-                }, 100);
+                }, 500);
                 ((TextView) view.findViewById(R.id.textView)).setText("CLICK!");
             }
         });
@@ -44,7 +44,7 @@ public class PageFragment extends Fragment {
                     public void run() {
                         ((TextView) view.findViewById(R.id.textView)).setText("");
                     }
-                }, 100);
+                }, 500);
                 ((TextView) view.findViewById(R.id.textView)).setText("LONG CLICK!");
                 return true;
             }
@@ -52,14 +52,12 @@ public class PageFragment extends Fragment {
 
         Spinner spinner = (Spinner) view.findViewById(R.id.spinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(), R.array.planets_array, android.R.layout.simple_spinner_item);
-//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
 
         WebView webView = (WebView) view.findViewById(R.id.webView);
         webView.setWebChromeClient(new WebChromeClient() {
             public void onProgressChanged(WebView view, int progress) {
-                // Activities and WebViews measure progress with different scales.
-                // The progress meter will automatically disappear when we reach 100%
                 getActivity().setProgress(progress * 1000);
             }
         });
@@ -70,9 +68,6 @@ public class PageFragment extends Fragment {
         });
 
         webView.loadUrl("http://google.com");
-
-//        Random random = new Random();
-//        view.setBackgroundColor(Color.argb(255, random.nextInt(256), random.nextInt(256), random.nextInt(256)));
         return view;
     }
 }

@@ -1,4 +1,4 @@
-package pl.edu.agh.marims.screenstreamer.lib.screen.manipulator;
+package pl.edu.agh.marims.screenstreamer.lib.screen.manipulator.events;
 
 public class MouseEvent {
     public MouseEventType event;
