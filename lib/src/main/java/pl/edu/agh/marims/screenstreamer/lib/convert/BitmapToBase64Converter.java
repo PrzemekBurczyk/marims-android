@@ -7,7 +7,7 @@ import java.io.ByteArrayOutputStream;
 
 public class BitmapToBase64Converter extends BitmapConverter<String> {
 
-    private static final float MAX_DIMENSION = 900.0f;
+    private static final float MAX_DIMENSION = 700.0f;
 
     @Override
     public String convert(Bitmap bitmap) {

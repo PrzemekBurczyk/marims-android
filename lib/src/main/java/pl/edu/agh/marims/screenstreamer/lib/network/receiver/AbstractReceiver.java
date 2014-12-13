@@ -2,6 +2,7 @@ package pl.edu.agh.marims.screenstreamer.lib.network.receiver;
 
 public abstract class AbstractReceiver {
 
+    protected String sessionId;
     protected String serverUrl;
     protected ReceiverCallback receiverCallback;
 

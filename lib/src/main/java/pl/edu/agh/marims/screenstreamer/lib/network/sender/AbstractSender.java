@@ -4,6 +4,7 @@ import pl.edu.agh.marims.screenstreamer.lib.screen.intercepter.Intercepter;
 
 public abstract class AbstractSender {
 
+    protected String sessionId;
     protected String serverUrl;
     protected SenderCallback senderCallback;
     protected Intercepter intercepter;

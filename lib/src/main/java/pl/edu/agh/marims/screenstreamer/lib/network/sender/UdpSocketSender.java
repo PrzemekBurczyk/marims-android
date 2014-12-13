@@ -21,7 +21,6 @@ import java.util.List;
 
 import pl.edu.agh.marims.screenstreamer.lib.convert.BitmapToBase64Converter;
 import pl.edu.agh.marims.screenstreamer.lib.screen.intercepter.Intercepter;
-import pl.edu.agh.marims.screenstreamer.lib.screen.intercepter.ScreenIntercepter;
 
 /**
  * Created by Przemek on 2014-12-10.
@@ -33,17 +32,20 @@ public class UdpSocketSender extends AbstractSender {
     private Handler mainLooper = new Handler(Looper.getMainLooper());
     private BitmapToBase64Converter converter;
     private SenderWorker worker;
+    private int port;
 
-    public UdpSocketSender(Intercepter intercepter, String serverUrl) {
+    public UdpSocketSender(Intercepter intercepter, String serverUrl, int port, String sessionId) {
         this.intercepter = intercepter;
         this.serverUrl = serverUrl;
         this.converter = new BitmapToBase64Converter();
-        this.worker = new SenderWorker();
+        this.port = port;
+        this.sessionId = sessionId;
     }
 
     @Override
     public void startSending() {
         super.startSending();
+        this.worker = new SenderWorker();
         worker.start();
     }
 
@@ -100,13 +102,16 @@ public class UdpSocketSender extends AbstractSender {
 
                 for (int i = 0; i < payloads.size(); i++) {
                     byte[] payload = payloads.get(i);
-                    DatagramPacket packet = new DatagramPacket(payload, payload.length, address, 6666);
+                    DatagramPacket packet = new DatagramPacket(payload, payload.length, address, port);
                     socket.send(packet);
                     if (payloads.size() > 2) {
                         Thread.sleep(50);
                     }
                 }
 
+                if (senderCallback != null) {
+                    senderCallback.onSuccess();
+                }
                 lastScreenshotVersion = screenshotVersion;
             }
         }
@@ -114,7 +119,7 @@ public class UdpSocketSender extends AbstractSender {
         private List<byte[]> buildPayloads() {
             JSONObject jsonObject = new JSONObject();
             try {
-                jsonObject.put("sessionId", ScreenIntercepter.SESSION_ID);
+                jsonObject.put("sessionId", sessionId);
                 jsonObject.put("screenWidth", bitmap.getWidth());
                 jsonObject.put("screenHeight", bitmap.getHeight());
                 jsonObject.put("image", converter.convert(bitmap));
@@ -145,7 +150,7 @@ public class UdpSocketSender extends AbstractSender {
                 payload[0] = (byte) (i + 1);
                 payload[1] = payloadsCount;
                 payload[2] = (byte) screenshotVersion;
-                byte[] sessionId = ScreenIntercepter.SESSION_ID.getBytes(Charsets.US_ASCII);
+                byte[] sessionId = UdpSocketSender.this.sessionId.getBytes(Charsets.US_ASCII);
                 System.arraycopy(sessionId, 0, payload, 3, sessionId.length);
                 payloads.add(payload);
             }

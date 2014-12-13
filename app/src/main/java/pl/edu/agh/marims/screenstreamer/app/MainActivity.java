@@ -8,20 +8,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Toast;
 
-import java.util.Map;
-
-import pl.edu.agh.marims.screenstreamer.lib.intent.IntentReader;
-import pl.edu.agh.marims.screenstreamer.lib.screen.intercepter.ScreenIntercepter;
-import pl.edu.agh.marims.screenstreamer.lib.screen.manipulator.ScreenManipulator;
+import pl.edu.agh.marims.screenstreamer.lib.Marims;
 
 public class MainActivity extends Activity {
 
     private static final String SERVER_URL = "http://ec2-54-93-32-50.eu-central-1.compute.amazonaws.com";
 
-    private ScreenIntercepter screenIntercepter;
-    private ScreenManipulator screenManipulator;
+    private Marims marims;
     private ViewPager viewPager;
     private FragmentStatePagerAdapter adapter;
 
@@ -33,9 +27,6 @@ public class MainActivity extends Activity {
 
     @Override
     public boolean onMenuItemSelected(int featureId, MenuItem item) {
-        if (screenManipulator != null) {
-//            screenManipulator.manipulate(null);
-        }
         return true;
     }
 
@@ -50,35 +41,20 @@ public class MainActivity extends Activity {
         viewPager.setAdapter(adapter);
         viewPager.setPageTransformer(true, new ZoomOutPageTransformer());
 
-        Map<String, String> intentParams = IntentReader.readIntentParams(getIntent());
-
-        showIntentToast(intentParams);
-
         View view = findViewById(android.R.id.content);
 
-        screenIntercepter = new ScreenIntercepter(this, view, SERVER_URL, intentParams);
-        screenManipulator = new ScreenManipulator(this, view, SERVER_URL, intentParams);
-
-    }
-
-    private void showIntentToast(Map<String, String> intentParams) {
-        if (!intentParams.isEmpty()) {
-            Toast.makeText(this.getApplicationContext(), IntentReader.printIntentParams(intentParams), Toast.LENGTH_LONG).show();
-        }
+        marims = new Marims(this, view, SERVER_URL);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        screenIntercepter.initialize();
-        screenIntercepter.intercept();
-        screenManipulator.initialize();
+        marims.onResume();
     }
 
     @Override
     protected void onPause() {
-        screenIntercepter.stop();
-        screenManipulator.stop();
+        marims.onPause();
         super.onPause();
     }
 }

@@ -11,6 +11,7 @@ import org.json.JSONObject;
 
 import java.util.Map;
 
+import pl.edu.agh.marims.screenstreamer.lib.intent.IntentReader;
 import pl.edu.agh.marims.screenstreamer.lib.network.receiver.AbstractReceiver;
 import pl.edu.agh.marims.screenstreamer.lib.network.receiver.ReceiverCallback;
 import pl.edu.agh.marims.screenstreamer.lib.network.receiver.SocketIOReceiver;
@@ -24,65 +25,72 @@ public class ScreenManipulator implements Manipulator {
     private static final String MOTION_EVENT_NAME = "motionEvent";
     private static final String KEY_EVENT_NAME = "keyEvent";
     private static final String SPECIAL_KEY_EVENT_NAME = "specialKeyEvent";
-
+    private static final String SESSION_ID_KEY = "sessionId";
     private final Activity activity;
     private final View view;
     private final String serverUrl;
     private final Map<String, String> intentParams;
+    private String sessionId;
     private AbstractReceiver receiver;
 
     private long lastDownUptime;
     private long systemBrowserDiff;
 
-    public ScreenManipulator(final Activity activity, final View view, String serverUrl, Map<String, String> intentParams) {
+    public ScreenManipulator(final Activity activity, final View view, String serverUrl) {
         this.activity = activity;
         this.view = view;
         this.serverUrl = serverUrl;
-        this.intentParams = intentParams;
+        this.intentParams = IntentReader.readIntentParams(activity.getIntent());
+
+        if (!intentParams.isEmpty()) {
+            this.sessionId = intentParams.get(SESSION_ID_KEY);
+        }
     }
 
     public void initialize() {
-        this.receiver = new SocketIOReceiver(serverUrl, new ReceiverCallback() {
-            @Override
-            public void onReceive(String event, JSONArray data) {
-                if (event.equals(MOTION_EVENT_NAME)) {
-                    try {
-                        JSONObject motionEvent = (JSONObject) data.get(0);
-                        MouseEvent mouseEvent = new MouseEvent();
-                        mouseEvent.event = MouseEventType.valueOf((String) motionEvent.get("event"));
-                        mouseEvent.time = (Long) motionEvent.get("time");
-                        mouseEvent.x = (Integer) motionEvent.get("x");
-                        mouseEvent.y = (Integer) motionEvent.get("y");
-                        ScreenManipulator.this.manipulate(mouseEvent);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                } else if (event.equals(KEY_EVENT_NAME)) {
-                    try {
-                        JSONObject keyEvent = (JSONObject) data.get(0);
-                        KeyboardEvent keyboardEvent = new KeyboardEvent();
-                        keyboardEvent.text = (String) keyEvent.get("text");
-                        ScreenManipulator.this.manipulate(keyboardEvent);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                } else if (event.equals(SPECIAL_KEY_EVENT_NAME)) {
-                    try {
-                        JSONObject specialEvent = (JSONObject) data.get(0);
-                        String specialKeyEventName = (String) specialEvent.get("name");
+        if (sessionId != null) {
+            this.receiver = new SocketIOReceiver(serverUrl, sessionId, new ReceiverCallback() {
+                @Override
+                public void onReceive(String event, JSONArray data) {
+                    if (event.equals(MOTION_EVENT_NAME)) {
                         try {
-                            SpecialKeyEvent specialKeyEvent = SpecialKeyEvent.valueOf(specialKeyEventName);
-                            ScreenManipulator.this.manipulate(specialKeyEvent);
+                            JSONObject motionEvent = (JSONObject) data.get(0);
+                            MouseEvent mouseEvent = new MouseEvent();
+                            mouseEvent.event = MouseEventType.valueOf((String) motionEvent.get("event"));
+                            mouseEvent.time = (Long) motionEvent.get("time");
+                            mouseEvent.x = (Integer) motionEvent.get("x");
+                            mouseEvent.y = (Integer) motionEvent.get("y");
+                            ScreenManipulator.this.manipulate(mouseEvent);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    } else if (event.equals(KEY_EVENT_NAME)) {
+                        try {
+                            JSONObject keyEvent = (JSONObject) data.get(0);
+                            KeyboardEvent keyboardEvent = new KeyboardEvent();
+                            keyboardEvent.text = (String) keyEvent.get("text");
+                            ScreenManipulator.this.manipulate(keyboardEvent);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    } else if (event.equals(SPECIAL_KEY_EVENT_NAME)) {
+                        try {
+                            JSONObject specialEvent = (JSONObject) data.get(0);
+                            String specialKeyEventName = (String) specialEvent.get("name");
+                            try {
+                                SpecialKeyEvent specialKeyEvent = SpecialKeyEvent.valueOf(specialKeyEventName);
+                                ScreenManipulator.this.manipulate(specialKeyEvent);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
-            }
-        });
-        this.receiver.startReceiving();
+            });
+            this.receiver.startReceiving();
+        }
     }
 
     @Override
@@ -129,7 +137,9 @@ public class ScreenManipulator implements Manipulator {
     }
 
     public void stop() {
-        this.receiver.stopReceiving();
+        if (this.receiver != null) {
+            this.receiver.stopReceiving();
+        }
     }
 
 }

@@ -10,18 +10,17 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import pl.edu.agh.marims.screenstreamer.lib.screen.intercepter.ScreenIntercepter;
-
 public class SocketIOReceiver extends AbstractReceiver {
 
     private Future<SocketIOClient> socketIOClientFuture;
 
-    public SocketIOReceiver(String serverUrl) {
+    public SocketIOReceiver(String serverUrl, String sessionId) {
         this.serverUrl = serverUrl;
+        this.sessionId = sessionId;
     }
 
-    public SocketIOReceiver(String serverUrl, ReceiverCallback receiverCallback) {
-        this(serverUrl);
+    public SocketIOReceiver(String serverUrl, String sessionId, ReceiverCallback receiverCallback) {
+        this(serverUrl, sessionId);
         this.receiverCallback = receiverCallback;
     }
 
@@ -40,7 +39,7 @@ public class SocketIOReceiver extends AbstractReceiver {
                 JSONArray json = new JSONArray();
                 JSONObject jsonImage = new JSONObject();
                 try {
-                    jsonImage.put("sessionId", ScreenIntercepter.SESSION_ID);
+                    jsonImage.put("sessionId", sessionId);
                     json.put(jsonImage);
                     client.emit("register", json);
                 } catch (JSONException e1) {
