@@ -58,7 +58,6 @@ public class PageFragment extends Fragment {
         WebView webView = (WebView) view.findViewById(R.id.webView);
         webView.setWebChromeClient(new WebChromeClient() {
             public void onProgressChanged(WebView view, int progress) {
-                getActivity().setProgress(progress * 1000);
             }
         });
         webView.setWebViewClient(new WebViewClient() {

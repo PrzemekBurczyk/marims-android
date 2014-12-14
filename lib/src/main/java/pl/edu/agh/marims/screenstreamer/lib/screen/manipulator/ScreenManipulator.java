@@ -1,6 +1,7 @@
 package pl.edu.agh.marims.screenstreamer.lib.screen.manipulator;
 
 import android.app.Activity;
+import android.app.Instrumentation;
 import android.os.SystemClock;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -26,13 +27,13 @@ public class ScreenManipulator implements Manipulator {
     private static final String KEY_EVENT_NAME = "keyEvent";
     private static final String SPECIAL_KEY_EVENT_NAME = "specialKeyEvent";
     private static final String SESSION_ID_KEY = "sessionId";
+    final Instrumentation instrumentation = new Instrumentation();
     private final Activity activity;
     private final View view;
     private final String serverUrl;
     private final Map<String, String> intentParams;
     private String sessionId;
     private AbstractReceiver receiver;
-
     private long lastDownUptime;
     private long systemBrowserDiff;
 
@@ -118,9 +119,15 @@ public class ScreenManipulator implements Manipulator {
     }
 
     @Override
-    public void manipulate(KeyboardEvent keyboardEvent) {
+    public void manipulate(final KeyboardEvent keyboardEvent) {
         if (keyboardEvent != null) {
-            view.dispatchKeyEvent(new KeyEvent(SystemClock.uptimeMillis(), keyboardEvent.text, 0, 0));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    instrumentation.sendStringSync(keyboardEvent.text);
+                }
+            }).start();
+//            view.dispatchKeyEvent(new KeyEvent(SystemClock.uptimeMillis(), keyboardEvent.text, 0, 0));
         }
     }
 
@@ -128,9 +135,17 @@ public class ScreenManipulator implements Manipulator {
     public void manipulate(SpecialKeyEvent specialKeyEvent) {
         if (specialKeyEvent != null) {
             switch (specialKeyEvent) {
-                case BACKSPACE:
-                    view.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DEL));
-                    view.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_DEL));
+                case DELETE:
+//                    view.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DEL));
+//                    view.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_DEL));
+
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            instrumentation.sendKeySync(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DEL));
+                            instrumentation.sendKeySync(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_DEL));
+                        }
+                    }).start();
                     break;
             }
         }
