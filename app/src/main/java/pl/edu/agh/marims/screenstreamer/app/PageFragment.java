@@ -10,6 +10,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -65,6 +66,15 @@ public class PageFragment extends Fragment {
                 Toast.makeText(getActivity(), "Oh no! " + description, Toast.LENGTH_SHORT).show();
             }
         });
+
+        LinearLayout listContainer = (LinearLayout) view.findViewById(R.id.listContainer);
+        for (int i = 0; i < 50; i++) {
+            TextView textView = new TextView(getActivity());
+            textView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+            textView.setText("TextView number " + i);
+            textView.setTextSize(20.0f);
+            listContainer.addView(textView);
+        }
 
         webView.loadUrl("http://google.com");
         return view;

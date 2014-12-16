@@ -94,7 +94,7 @@ public class UdpSocketSender extends AbstractSender {
 
                 if (DEBUG) {
                     Log.d("REQUEST", "Payloads count: " + payloads.size());
-                    Log.d("REQUEST", "Payloads length: ");
+                    Log.d("REQUEST", "Payloads length: " + ((payloads.size() - 1) * MAX_SIZE + payloads.get(payloads.size() - 1).length));
                     for (int i = 0; i < payloads.size(); i++) {
                         Log.d("REQUEST", i + ":" + payloads.get(i).length);
                     }
