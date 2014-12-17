@@ -12,10 +12,11 @@ import java.util.Map;
 import pl.edu.agh.marims.screenstreamer.lib.intent.IntentReader;
 import pl.edu.agh.marims.screenstreamer.lib.measurement.Measurer;
 import pl.edu.agh.marims.screenstreamer.lib.network.sender.AbstractSender;
-import pl.edu.agh.marims.screenstreamer.lib.network.sender.UdpSocketSender;
+import pl.edu.agh.marims.screenstreamer.lib.network.sender.TcpSocketSender;
 
 public class ScreenIntercepter implements Intercepter {
     private static final int UDP_PORT = 6666;
+    private static final int TCP_PORT = 7777;
     private static final int MEASURE_INTERVAL = 5000;
     private static final String SESSION_ID_KEY = "sessionId";
     private String sessionId = null;
@@ -36,7 +37,8 @@ public class ScreenIntercepter implements Intercepter {
             this.sessionId = intentParams.get(SESSION_ID_KEY);
             if (sessionId != null) {
                 //        sender = new AsyncTaskSender(this, serverUrl + UPLOAD_ENDPOINT);
-                sender = new UdpSocketSender(this, serverUrl, UDP_PORT, this.sessionId);
+//                sender = new UdpSocketSender(this, serverUrl, UDP_PORT, this.sessionId);
+                sender = new TcpSocketSender(this, serverUrl, TCP_PORT, this.sessionId);
                 measurer = new Measurer(sender);
             }
         }

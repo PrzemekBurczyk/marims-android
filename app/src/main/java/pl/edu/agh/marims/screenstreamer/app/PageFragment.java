@@ -67,14 +67,14 @@ public class PageFragment extends Fragment {
             }
         });
 
-        LinearLayout listContainer = (LinearLayout) view.findViewById(R.id.listContainer);
-        for (int i = 0; i < 50; i++) {
-            TextView textView = new TextView(getActivity());
-            textView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-            textView.setText("TextView number " + i);
-            textView.setTextSize(20.0f);
-            listContainer.addView(textView);
-        }
+//        LinearLayout listContainer = (LinearLayout) view.findViewById(R.id.listContainer);
+//        for (int i = 0; i < 50; i++) {
+//            TextView textView = new TextView(getActivity());
+//            textView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+//            textView.setText("TextView number " + i);
+//            textView.setTextSize(20.0f);
+//            listContainer.addView(textView);
+//        }
 
         webView.loadUrl("http://google.com");
         return view;
