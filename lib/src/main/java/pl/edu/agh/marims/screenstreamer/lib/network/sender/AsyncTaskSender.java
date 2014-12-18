@@ -2,7 +2,6 @@ package pl.edu.agh.marims.screenstreamer.lib.network.sender;
 
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -67,7 +66,7 @@ public class AsyncTaskSender extends AbstractSender {
             String postString = jsonObject.toString();
 //            String postString = "{ \"sessionId\": \"" + ScreenIntercepter.SESSION_ID + "\", \"image\": \"" + converter.convert(bitmap) + "\"}";
 
-            Log.d("REQUEST", "Post length: " + postString.length());
+//            Log.d("REQUEST", "Post length: " + postString.length());
 
             HttpClient httpClient = new DefaultHttpClient();
             HttpPost httpPost = new HttpPost(serverUrl);

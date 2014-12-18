@@ -18,6 +18,8 @@ Aenean lacinia interdum sem at posuere. Duis pretium ultricies lorem sed suscipi
     <string name="main_jan">Jan Resiak</string>
     <string name="title_header">Prototyp systemu weryfikujący wymagania i założenia technologiczne</string>
     <string name="description_header">Proces przetwarzania</string>
+    <string name="fps">fps</string>
+    <string name="zero">0</string>
 
     <string-array name="planets_array">
         <item>Mercury</item>

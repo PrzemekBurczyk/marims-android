@@ -11,15 +11,22 @@ import java.util.Map;
 
 import pl.edu.agh.marims.screenstreamer.lib.intent.IntentReader;
 import pl.edu.agh.marims.screenstreamer.lib.measurement.Measurer;
+import pl.edu.agh.marims.screenstreamer.lib.measurement.Statistics;
 import pl.edu.agh.marims.screenstreamer.lib.network.sender.AbstractSender;
+import pl.edu.agh.marims.screenstreamer.lib.network.sender.AsyncTaskSender;
+import pl.edu.agh.marims.screenstreamer.lib.network.sender.SenderType;
 import pl.edu.agh.marims.screenstreamer.lib.network.sender.TcpSocketSender;
+import pl.edu.agh.marims.screenstreamer.lib.network.sender.UdpSocketSender;
 
 public class ScreenIntercepter implements Intercepter {
+    private static final String UPLOAD_ENDPOINT = "/upload";
     private static final int UDP_PORT = 6666;
     private static final int TCP_PORT = 7777;
     private static final int MEASURE_INTERVAL = 5000;
     private static final String SESSION_ID_KEY = "sessionId";
+    private StatisticsCallback statisticsCallback;
     private String sessionId = null;
+    private String serverUrl = null;
     private Activity activity;
     private View rootView;
     private Map<String, String> intentParams;
@@ -31,16 +38,41 @@ public class ScreenIntercepter implements Intercepter {
     public ScreenIntercepter(final Activity activity, final View view, String serverUrl) {
         this.activity = activity;
         this.rootView = view;
+        this.serverUrl = serverUrl;
         this.intentParams = IntentReader.readIntentParams(activity.getIntent());
 
         if (!intentParams.isEmpty()) {
             this.sessionId = intentParams.get(SESSION_ID_KEY);
             if (sessionId != null) {
-                //        sender = new AsyncTaskSender(this, serverUrl + UPLOAD_ENDPOINT);
-//                sender = new UdpSocketSender(this, serverUrl, UDP_PORT, this.sessionId);
                 sender = new TcpSocketSender(this, serverUrl, TCP_PORT, this.sessionId);
                 measurer = new Measurer(sender);
             }
+        }
+    }
+
+    public void setStatisticsCallback(StatisticsCallback statisticsCallback) {
+        this.statisticsCallback = statisticsCallback;
+    }
+
+    public void setSenderType(SenderType senderType) {
+        if (sender != null) {
+            sender.stopSending();
+            sender = null;
+        }
+        switch (senderType) {
+            case TCP:
+                sender = new TcpSocketSender(this, this.serverUrl, TCP_PORT, this.sessionId);
+                break;
+            case UDP:
+                sender = new UdpSocketSender(this, this.serverUrl, UDP_PORT, this.sessionId);
+                break;
+            case HTTP:
+                sender = new AsyncTaskSender(this, this.serverUrl + UPLOAD_ENDPOINT, this.sessionId);
+                break;
+        }
+        measurer = new Measurer(sender);
+        if (initialized) {
+            sender.startSending();
         }
     }
 
@@ -75,7 +107,11 @@ public class ScreenIntercepter implements Intercepter {
                 @Override
                 public void run() {
                     if (measurer != null) {
-                        Log.d("MEASURER", measurer.getStatistics().toString());
+                        Statistics statistics = measurer.getStatistics();
+                        Log.d("MEASURER", statistics.toString());
+                        if (statisticsCallback != null) {
+                            statisticsCallback.onNewStatistics(statistics);
+                        }
                     }
                     if (initialized) {
                         handler.postDelayed(this, MEASURE_INTERVAL);
