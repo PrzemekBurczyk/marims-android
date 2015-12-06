@@ -21,7 +21,7 @@ import pl.edu.agh.marims.screenstreamer.lib.screen.intercepter.StatisticsCallbac
 
 public class MainActivity extends Activity {
 
-    private static final String SERVER_URL = "http://ec2-54-93-32-50.eu-central-1.compute.amazonaws.com";
+    private static final String SERVER_URL = "http://marims.pl";
 
     private Marims marims;
     private ViewPager viewPager;

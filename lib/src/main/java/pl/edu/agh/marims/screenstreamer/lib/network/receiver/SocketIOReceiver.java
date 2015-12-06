@@ -11,7 +11,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class SocketIOReceiver extends AbstractReceiver {
-
     private Future<SocketIOClient> socketIOClientFuture;
 
     public SocketIOReceiver(String serverUrl, String sessionId) {
