@@ -2,19 +2,30 @@ package pl.edu.agh.marims.screenstreamer.lib.network.receiver;
 
 import android.util.Log;
 
-import com.koushikdutta.async.future.Future;
-import com.koushikdutta.async.http.AsyncHttpClient;
-import com.koushikdutta.async.http.SocketIOClient;
-
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.URISyntaxException;
+
+import io.socket.client.IO;
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
+import pl.edu.agh.marims.screenstreamer.lib.screen.manipulator.events.KeyboardEvent;
+import pl.edu.agh.marims.screenstreamer.lib.screen.manipulator.events.MouseEvent;
+import pl.edu.agh.marims.screenstreamer.lib.screen.manipulator.events.MouseEventType;
+import pl.edu.agh.marims.screenstreamer.lib.screen.manipulator.events.SpecialKeyEvent;
+
 public class SocketIOReceiver extends AbstractReceiver {
-    private Future<SocketIOClient> socketIOClientFuture;
+
+    public static final String MOTION_EVENT_NAME = "motionEvent";
+    public static final String KEY_EVENT_NAME = "keyEvent";
+    public static final String SPECIAL_KEY_EVENT_NAME = "specialKeyEvent";
+
+    private static final String ANDROID_ENDPOINT = "android";
+    private Socket socket;
 
     public SocketIOReceiver(String serverUrl, String sessionId) {
-        this.serverUrl = serverUrl;
+        this.serverUrl = serverUrl.replaceAll("/$", "");
         this.sessionId = sessionId;
     }
 
@@ -25,44 +36,84 @@ public class SocketIOReceiver extends AbstractReceiver {
 
     @Override
     public void startReceiving() {
-
-        socketIOClientFuture = SocketIOClient.connect(AsyncHttpClient.getDefaultInstance(), serverUrl, new SocketIOClient.SocketIOConnectCallback() {
-            @Override
-            public void onConnectCompleted(Exception e, final SocketIOClient client) {
-                if (e != null) {
-                    e.printStackTrace();
-                    return;
+        try {
+            socket = IO.socket(serverUrl + "/" + ANDROID_ENDPOINT + "/" + sessionId);
+            socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    Log.d("SOCKET_IO", "Connected.");
                 }
-                Log.d("SOCKET_IO", "Connected...");
-
-                JSONArray json = new JSONArray();
-                JSONObject jsonImage = new JSONObject();
-                try {
-                    jsonImage.put("sessionId", sessionId);
-                    json.put(jsonImage);
-                    client.emit("register", json);
-                } catch (JSONException e1) {
-                    e1.printStackTrace();
+            }).on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    Log.d("SOCKET_IO", "Disconnected.");
                 }
-
-                client.setEventCallback(new SocketIOClient.EventCallback() {
-                    @Override
-                    public void onEvent(String event, JSONArray data) {
-                        if (receiverCallback != null) {
-                            receiverCallback.onReceive(event, data);
+            }).on(Socket.EVENT_CONNECT_ERROR, new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    Log.d("SOCKET_IO", "Connection error.");
+                }
+            }).on(Socket.EVENT_CONNECT_TIMEOUT, new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    Log.d("SOCKET_IO", "Connection timeout.");
+                }
+            }).on(MOTION_EVENT_NAME, new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    if (receiverCallback != null) {
+                        try {
+                            JSONObject motionEvent = (JSONObject) args[0];
+                            MouseEvent mouseEvent = new MouseEvent();
+                            mouseEvent.event = MouseEventType.valueOf((String) motionEvent.get("event"));
+                            mouseEvent.time = (Long) motionEvent.get("time");
+                            mouseEvent.x = (Integer) motionEvent.get("x");
+                            mouseEvent.y = (Integer) motionEvent.get("y");
+                            receiverCallback.onMouseEvent(mouseEvent);
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
                     }
-                });
-
-            }
-        });
-
+                }
+            }).on(KEY_EVENT_NAME, new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    if (receiverCallback != null) {
+                        try {
+                            JSONObject keyEvent = (JSONObject) args[0];
+                            KeyboardEvent keyboardEvent = new KeyboardEvent();
+                            keyboardEvent.text = (String) keyEvent.get("text");
+                            receiverCallback.onKeyboardEvent(keyboardEvent);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }).on(SPECIAL_KEY_EVENT_NAME, new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    if (receiverCallback != null) {
+                        try {
+                            JSONObject specialEvent = (JSONObject) args[0];
+                            String specialKeyEventName = (String) specialEvent.get("name");
+                            SpecialKeyEvent specialKeyEvent = SpecialKeyEvent.valueOf(specialKeyEventName);
+                            receiverCallback.onSpecialKeyEvent(specialKeyEvent);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
+            socket.connect();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void stopReceiving() {
-        if (socketIOClientFuture != null && !socketIOClientFuture.isCancelled()) {
-            socketIOClientFuture.cancel(true);
+        if (socket != null) {
+            socket.disconnect();
         }
     }
 }

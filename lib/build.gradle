@@ -15,8 +15,10 @@ android {
 }
 
 dependencies {
-    compile 'com.koushikdutta.androidasync:AndroidAsync:1.0.0'
-    compile files('libs/socketio.jar')
+    compile('io.socket:socket.io-client:0.6.3') {
+        // excluding org.json which is provided by Android
+        exclude group: 'org.json', module: 'json'
+    }
 }
 
 task clearJar(type: Delete) {

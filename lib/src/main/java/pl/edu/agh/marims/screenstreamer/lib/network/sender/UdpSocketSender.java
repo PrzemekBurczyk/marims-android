@@ -5,12 +5,11 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
-import com.koushikdutta.async.http.libcore.Charsets;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -22,9 +21,6 @@ import java.util.List;
 import pl.edu.agh.marims.screenstreamer.lib.convert.BitmapToBase64Converter;
 import pl.edu.agh.marims.screenstreamer.lib.screen.intercepter.Intercepter;
 
-/**
- * Created by Przemek on 2014-12-10.
- */
 public class UdpSocketSender extends AbstractSender {
 
     private static final boolean DEBUG = false;
@@ -65,14 +61,13 @@ public class UdpSocketSender extends AbstractSender {
             lastScreenshotVersion = screenshotVersion;
             try {
                 socket = new DatagramSocket();
-                address = InetAddress.getByName(serverUrl.replaceFirst("http://", ""));
+                String serverAddress = serverUrl.replaceFirst("http://", "").replaceFirst(":(\\d){1,5}", "");
+                address = InetAddress.getByName(serverAddress);
                 while (runSending) {
                     if (!loadInProgress) {
                         try {
                             send();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        } catch (InterruptedException e) {
+                        } catch (IOException | InterruptedException e) {
                             e.printStackTrace();
                         }
                         load();
@@ -81,9 +76,7 @@ public class UdpSocketSender extends AbstractSender {
                 if (socket != null && !socket.isClosed()) {
                     socket.close();
                 }
-            } catch (SocketException e) {
-                e.printStackTrace();
-            } catch (UnknownHostException e) {
+            } catch (SocketException | UnknownHostException e) {
                 e.printStackTrace();
             }
         }
@@ -116,7 +109,7 @@ public class UdpSocketSender extends AbstractSender {
             }
         }
 
-        private List<byte[]> buildPayloads() {
+        private List<byte[]> buildPayloads() throws UnsupportedEncodingException {
             JSONObject jsonObject = new JSONObject();
             try {
                 jsonObject.put("sessionId", sessionId);
@@ -150,7 +143,7 @@ public class UdpSocketSender extends AbstractSender {
                 payload[0] = (byte) (i + 1);
                 payload[1] = payloadsCount;
                 payload[2] = (byte) screenshotVersion;
-                byte[] sessionId = UdpSocketSender.this.sessionId.getBytes(Charsets.US_ASCII);
+                byte[] sessionId = UdpSocketSender.this.sessionId.getBytes("US-ASCII");
                 System.arraycopy(sessionId, 0, payload, 3, sessionId.length);
                 payloads.add(payload);
             }

@@ -8,9 +8,6 @@ import pl.edu.agh.marims.screenstreamer.lib.screen.intercepter.ScreenIntercepter
 import pl.edu.agh.marims.screenstreamer.lib.screen.intercepter.StatisticsCallback;
 import pl.edu.agh.marims.screenstreamer.lib.screen.manipulator.ScreenManipulator;
 
-/**
- * Created by Przemek on 2014-12-13.
- */
 public class Marims {
 
     private ScreenIntercepter screenIntercepter;

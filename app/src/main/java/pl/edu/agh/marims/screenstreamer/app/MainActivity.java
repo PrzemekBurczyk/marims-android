@@ -21,7 +21,8 @@ import pl.edu.agh.marims.screenstreamer.lib.screen.intercepter.StatisticsCallbac
 
 public class MainActivity extends Activity {
 
-    private static final String SERVER_URL = "http://marims.pl";
+    //    private static final String SERVER_URL = "http://marims.pl";
+    private static final String SERVER_URL = "http://192.168.0.16:5000";
 
     private Marims marims;
     private ViewPager viewPager;

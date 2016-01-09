@@ -7,9 +7,6 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.util.Map;
 
 import pl.edu.agh.marims.screenstreamer.lib.intent.IntentReader;
@@ -18,14 +15,10 @@ import pl.edu.agh.marims.screenstreamer.lib.network.receiver.ReceiverCallback;
 import pl.edu.agh.marims.screenstreamer.lib.network.receiver.SocketIOReceiver;
 import pl.edu.agh.marims.screenstreamer.lib.screen.manipulator.events.KeyboardEvent;
 import pl.edu.agh.marims.screenstreamer.lib.screen.manipulator.events.MouseEvent;
-import pl.edu.agh.marims.screenstreamer.lib.screen.manipulator.events.MouseEventType;
 import pl.edu.agh.marims.screenstreamer.lib.screen.manipulator.events.SpecialKeyEvent;
 
 public class ScreenManipulator implements Manipulator {
 
-    private static final String MOTION_EVENT_NAME = "motionEvent";
-    private static final String KEY_EVENT_NAME = "keyEvent";
-    private static final String SPECIAL_KEY_EVENT_NAME = "specialKeyEvent";
     private static final String SESSION_ID_KEY = "sessionId";
     final Instrumentation instrumentation = new Instrumentation();
     private final Activity activity;
@@ -52,42 +45,33 @@ public class ScreenManipulator implements Manipulator {
         if (sessionId != null) {
             this.receiver = new SocketIOReceiver(serverUrl, sessionId, new ReceiverCallback() {
                 @Override
-                public void onReceive(String event, JSONArray data) {
-                    if (event.equals(MOTION_EVENT_NAME)) {
-                        try {
-                            JSONObject motionEvent = (JSONObject) data.get(0);
-                            MouseEvent mouseEvent = new MouseEvent();
-                            mouseEvent.event = MouseEventType.valueOf((String) motionEvent.get("event"));
-                            mouseEvent.time = (Long) motionEvent.get("time");
-                            mouseEvent.x = (Integer) motionEvent.get("x");
-                            mouseEvent.y = (Integer) motionEvent.get("y");
-                            ScreenManipulator.this.manipulate(mouseEvent);
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                public void onMouseEvent(final MouseEvent event) {
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ScreenManipulator.this.manipulate(event);
                         }
-                    } else if (event.equals(KEY_EVENT_NAME)) {
-                        try {
-                            JSONObject keyEvent = (JSONObject) data.get(0);
-                            KeyboardEvent keyboardEvent = new KeyboardEvent();
-                            keyboardEvent.text = (String) keyEvent.get("text");
-                            ScreenManipulator.this.manipulate(keyboardEvent);
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                    });
+                }
+
+                @Override
+                public void onKeyboardEvent(final KeyboardEvent event) {
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ScreenManipulator.this.manipulate(event);
                         }
-                    } else if (event.equals(SPECIAL_KEY_EVENT_NAME)) {
-                        try {
-                            JSONObject specialEvent = (JSONObject) data.get(0);
-                            String specialKeyEventName = (String) specialEvent.get("name");
-                            try {
-                                SpecialKeyEvent specialKeyEvent = SpecialKeyEvent.valueOf(specialKeyEventName);
-                                ScreenManipulator.this.manipulate(specialKeyEvent);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                    });
+                }
+
+                @Override
+                public void onSpecialKeyEvent(final SpecialKeyEvent event) {
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ScreenManipulator.this.manipulate(event);
                         }
-                    }
+                    });
                 }
             });
             this.receiver.startReceiving();

@@ -13,15 +13,10 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.SocketException;
-import java.net.UnknownHostException;
 
 import pl.edu.agh.marims.screenstreamer.lib.convert.BitmapToBase64Converter;
 import pl.edu.agh.marims.screenstreamer.lib.screen.intercepter.Intercepter;
 
-/**
- * Created by Przemek on 2014-12-16.
- */
 public class TcpSocketSender extends AbstractSender {
 
     private static final boolean DEBUG = false;
@@ -62,7 +57,7 @@ public class TcpSocketSender extends AbstractSender {
         public void run() {
             lastScreenshotVersion = screenshotVersion;
             try {
-                String serverAddress = serverUrl.replaceFirst("http://", "");
+                String serverAddress = serverUrl.replaceFirst("http://", "").replaceFirst(":(\\d){1,5}", "");
                 address = InetAddress.getByName(serverAddress);
                 socket = new Socket(address, port);
                 printWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
@@ -70,18 +65,12 @@ public class TcpSocketSender extends AbstractSender {
                     if (!loadInProgress) {
                         try {
                             send();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        } catch (InterruptedException e) {
+                        } catch (IOException | InterruptedException e) {
                             e.printStackTrace();
                         }
                         load();
                     }
                 }
-            } catch (SocketException e) {
-                e.printStackTrace();
-            } catch (UnknownHostException e) {
-                e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
