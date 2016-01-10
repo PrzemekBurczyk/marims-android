@@ -1,11 +1,10 @@
-package pl.edu.agh.marims.hub;
+package pl.edu.agh.marims.hub.activity;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.design.widget.FloatingActionButton;
@@ -16,6 +15,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 
+import pl.edu.agh.marims.hub.fragment.FileDetailFragment;
+import pl.edu.agh.marims.hub.R;
 import pl.edu.agh.marims.hub.dummy.DummyContent;
 
 import java.util.List;

@@ -1,4 +1,4 @@
-package pl.edu.agh.marims.hub;
+package pl.edu.agh.marims.hub.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +10,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
+
+import pl.edu.agh.marims.hub.fragment.FileDetailFragment;
+import pl.edu.agh.marims.hub.R;
 
 /**
  * An activity representing a single File detail screen. This

@@ -1,4 +1,4 @@
-package pl.edu.agh.marims.hub;
+package pl.edu.agh.marims.hub.fragment;
 
 import android.app.Activity;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -9,6 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import pl.edu.agh.marims.hub.R;
+import pl.edu.agh.marims.hub.activity.FileDetailActivity;
+import pl.edu.agh.marims.hub.activity.FileListActivity;
 import pl.edu.agh.marims.hub.dummy.DummyContent;
 
 /**
