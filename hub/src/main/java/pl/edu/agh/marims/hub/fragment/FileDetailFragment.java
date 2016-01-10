@@ -21,6 +21,7 @@ import pl.edu.agh.marims.hub.App;
 import pl.edu.agh.marims.hub.R;
 import pl.edu.agh.marims.hub.activity.FileDetailActivity;
 import pl.edu.agh.marims.hub.activity.FileListActivity;
+import pl.edu.agh.marims.hub.models.ApplicationFile;
 import pl.edu.agh.marims.hub.models.Session;
 
 /**
@@ -36,7 +37,7 @@ public class FileDetailFragment extends Fragment {
      */
     public static final String ARG_ITEM_ID = "item_id";
 
-    private String fileId;
+    private ApplicationFile file;
     private SimpleItemRecyclerViewAdapter adapter;
 
     /**
@@ -55,7 +56,7 @@ public class FileDetailFragment extends Fragment {
                     System.out.println(sessions.size());
                     List<Session> fileSessions = new ArrayList<>();
                     for (Session session : sessions) {
-                        if (fileId.equals(session.getFile())) {
+                        if (file.toApplicationFileString().equals(session.getFile())) {
                             fileSessions.add(session);
                         }
                     }
@@ -69,7 +70,6 @@ public class FileDetailFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        System.out.println("Adding data listener");
         ((App) getActivity().getApplication()).addDataListener(dataListener);
     }
 
@@ -82,14 +82,14 @@ public class FileDetailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+
         if (getArguments().containsKey(ARG_ITEM_ID)) {
-            fileId = getArguments().getString(ARG_ITEM_ID);
+            file = (ApplicationFile) getArguments().getSerializable(ARG_ITEM_ID);
 
             Activity activity = this.getActivity();
             CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
             if (appBarLayout != null) {
-                appBarLayout.setTitle(fileId);
+                appBarLayout.setTitle(file.getFileName());
             }
         }
     }

@@ -16,13 +16,14 @@ import java.util.List;
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
+import pl.edu.agh.marims.hub.models.ApplicationFile;
 import pl.edu.agh.marims.hub.models.Session;
 import pl.edu.agh.marims.hub.util.GsonUtil;
 
 public class App extends Application {
 
     public interface DataListener {
-        void onFilesUpdated(List<String> files);
+        void onFilesUpdated(List<ApplicationFile> files);
 
         void onSessionsUpdated(List<Session> sessions);
     }
@@ -30,7 +31,7 @@ public class App extends Application {
     public static class BaseDataListener implements DataListener {
 
         @Override
-        public void onFilesUpdated(List<String> files) {
+        public void onFilesUpdated(List<ApplicationFile> files) {
 
         }
 
@@ -68,7 +69,7 @@ public class App extends Application {
         return socket;
     }
 
-    private List<String> files = new ArrayList<>();
+    private List<ApplicationFile> files = new ArrayList<>();
     private List<Session> sessions = new ArrayList<>();
 
     @Override
@@ -101,7 +102,11 @@ public class App extends Application {
                 @Override
                 public void call(Object... args) {
                     JSONArray filesJson = (JSONArray) args[0];
-                    files = GsonUtil.getGson().fromJson(filesJson.toString(), stringListType);
+                    List<String> filesStrings = GsonUtil.getGson().fromJson(filesJson.toString(), stringListType);
+                    files.clear();
+                    for (String fileString : filesStrings) {
+                        files.add(new ApplicationFile(fileString));
+                    }
                     for (DataListener dataListener : dataListeners) {
                         dataListener.onFilesUpdated(files);
                     }

@@ -19,6 +19,7 @@ import java.util.List;
 import pl.edu.agh.marims.hub.App;
 import pl.edu.agh.marims.hub.R;
 import pl.edu.agh.marims.hub.fragment.FileDetailFragment;
+import pl.edu.agh.marims.hub.models.ApplicationFile;
 import pl.edu.agh.marims.hub.network.MarimsApiClient;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -42,7 +43,7 @@ public class FileListActivity extends AppCompatActivity {
 
     private App.DataListener dataListener = new App.BaseDataListener() {
         @Override
-        public void onFilesUpdated(final List<String> files) {
+        public void onFilesUpdated(final List<ApplicationFile> files) {
             FileListActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -73,7 +74,11 @@ public class FileListActivity extends AppCompatActivity {
                 MarimsApiClient.getInstance().getMarimsService().getFiles().enqueue(new Callback<List<String>>() {
                     @Override
                     public void onResponse(Response<List<String>> response) {
-                        adapter.setItems(response.body());
+                        List<ApplicationFile> files = new ArrayList<>();
+                        for (String fileString : response.body()) {
+                            files.add(new ApplicationFile(fileString));
+                        }
+                        adapter.setItems(files);
                         adapter.notifyDataSetChanged();
                     }
 
@@ -107,19 +112,19 @@ public class FileListActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        adapter = new SimpleItemRecyclerViewAdapter(new ArrayList<String>());
+        adapter = new SimpleItemRecyclerViewAdapter(new ArrayList<ApplicationFile>());
         recyclerView.setAdapter(adapter);
     }
 
     public class SimpleItemRecyclerViewAdapter extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
 
-        private List<String> mValues;
+        private List<ApplicationFile> mValues;
 
-        public SimpleItemRecyclerViewAdapter(List<String> items) {
+        public SimpleItemRecyclerViewAdapter(List<ApplicationFile> items) {
             mValues = items;
         }
 
-        public void setItems(List<String> items) {
+        public void setItems(List<ApplicationFile> items) {
             mValues = items;
         }
 
@@ -133,14 +138,14 @@ public class FileListActivity extends AppCompatActivity {
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.mItem = mValues.get(position);
             holder.mIdView.setText(String.valueOf(position + 1));
-            holder.mContentView.setText(mValues.get(position));
+            holder.mContentView.setText(mValues.get(position).getFileName());
 
             holder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (mTwoPane) {
                         Bundle arguments = new Bundle();
-                        arguments.putString(FileDetailFragment.ARG_ITEM_ID, holder.mItem);
+                        arguments.putSerializable(FileDetailFragment.ARG_ITEM_ID, holder.mItem);
                         FileDetailFragment fragment = new FileDetailFragment();
                         fragment.setArguments(arguments);
                         getSupportFragmentManager().beginTransaction()
@@ -165,7 +170,7 @@ public class FileListActivity extends AppCompatActivity {
             public final View mView;
             public final TextView mIdView;
             public final TextView mContentView;
-            public String mItem;
+            public ApplicationFile mItem;
 
             public ViewHolder(View view) {
                 super(view);
