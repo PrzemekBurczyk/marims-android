@@ -4,22 +4,23 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-
-import pl.edu.agh.marims.hub.fragment.FileDetailFragment;
-import pl.edu.agh.marims.hub.R;
-import pl.edu.agh.marims.hub.dummy.DummyContent;
-
+import java.util.ArrayList;
 import java.util.List;
+
+import pl.edu.agh.marims.hub.R;
+import pl.edu.agh.marims.hub.fragment.FileDetailFragment;
+import pl.edu.agh.marims.hub.network.MarimsApiClient;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * An activity representing a list of Files. This activity
@@ -36,6 +37,7 @@ public class FileListActivity extends AppCompatActivity {
      * device.
      */
     private boolean mTwoPane;
+    private SimpleItemRecyclerViewAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,18 +48,28 @@ public class FileListActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         toolbar.setTitle(getTitle());
 
+        View recyclerView = findViewById(R.id.file_list);
+        assert recyclerView != null;
+        setupRecyclerView((RecyclerView) recyclerView);
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                MarimsApiClient.getInstance().getMarimsService().getFiles().enqueue(new Callback<List<String>>() {
+                    @Override
+                    public void onResponse(Response<List<String>> response) {
+                        adapter.setItems(response.body());
+                        adapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onFailure(Throwable t) {
+                        t.printStackTrace();
+                    }
+                });
             }
         });
-
-        View recyclerView = findViewById(R.id.file_list);
-        assert recyclerView != null;
-        setupRecyclerView((RecyclerView) recyclerView);
 
         if (findViewById(R.id.file_detail_container) != null) {
             // The detail container view will be present only in the
@@ -69,37 +81,40 @@ public class FileListActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(DummyContent.ITEMS));
+        adapter = new SimpleItemRecyclerViewAdapter(new ArrayList<String>());
+        recyclerView.setAdapter(adapter);
     }
 
-    public class SimpleItemRecyclerViewAdapter
-            extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
+    public class SimpleItemRecyclerViewAdapter extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
 
-        private final List<DummyContent.DummyItem> mValues;
+        private List<String> mValues;
 
-        public SimpleItemRecyclerViewAdapter(List<DummyContent.DummyItem> items) {
+        public SimpleItemRecyclerViewAdapter(List<String> items) {
+            mValues = items;
+        }
+
+        public void setItems(List<String> items) {
             mValues = items;
         }
 
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.file_list_content, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.file_list_content, parent, false);
             return new ViewHolder(view);
         }
 
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.mItem = mValues.get(position);
-            holder.mIdView.setText(mValues.get(position).id);
-            holder.mContentView.setText(mValues.get(position).content);
+            holder.mIdView.setText(String.valueOf(position + 1));
+            holder.mContentView.setText(mValues.get(position));
 
             holder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (mTwoPane) {
                         Bundle arguments = new Bundle();
-                        arguments.putString(FileDetailFragment.ARG_ITEM_ID, holder.mItem.id);
+                        arguments.putString(FileDetailFragment.ARG_ITEM_ID, holder.mItem);
                         FileDetailFragment fragment = new FileDetailFragment();
                         fragment.setArguments(arguments);
                         getSupportFragmentManager().beginTransaction()
@@ -108,8 +123,7 @@ public class FileListActivity extends AppCompatActivity {
                     } else {
                         Context context = v.getContext();
                         Intent intent = new Intent(context, FileDetailActivity.class);
-                        intent.putExtra(FileDetailFragment.ARG_ITEM_ID, holder.mItem.id);
-
+                        intent.putExtra(FileDetailFragment.ARG_ITEM_ID, holder.mItem);
                         context.startActivity(intent);
                     }
                 }
@@ -125,7 +139,7 @@ public class FileListActivity extends AppCompatActivity {
             public final View mView;
             public final TextView mIdView;
             public final TextView mContentView;
-            public DummyContent.DummyItem mItem;
+            public String mItem;
 
             public ViewHolder(View view) {
                 super(view);
