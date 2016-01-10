@@ -16,6 +16,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import pl.edu.agh.marims.hub.App;
 import pl.edu.agh.marims.hub.R;
 import pl.edu.agh.marims.hub.fragment.FileDetailFragment;
 import pl.edu.agh.marims.hub.network.MarimsApiClient;
@@ -38,6 +39,19 @@ public class FileListActivity extends AppCompatActivity {
      */
     private boolean mTwoPane;
     private SimpleItemRecyclerViewAdapter adapter;
+
+    private App.DataListener dataListener = new App.BaseDataListener() {
+        @Override
+        public void onFilesUpdated(final List<String> files) {
+            FileListActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    adapter.setItems(files);
+                    adapter.notifyDataSetChanged();
+                }
+            });
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +92,18 @@ public class FileListActivity extends AppCompatActivity {
             // activity should be in two-pane mode.
             mTwoPane = true;
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ((App) getApplication()).addDataListener(dataListener);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        ((App) getApplication()).removeDataListener(dataListener);
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
