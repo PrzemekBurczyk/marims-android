@@ -36,11 +36,13 @@ public class IntentReader {
      */
     public static Map<String, String> readIntentParams(Intent intent) {
         Map<String, String> intentParams = new HashMap<String, String>();
-        if (Intent.ACTION_VIEW.equals(intent.getAction())) {
+        if (Intent.ACTION_VIEW.equals(intent.getAction()) || Intent.ACTION_MAIN.equals(intent.getAction())) {
             Uri uri = intent.getData();
-            Set<String> queryParameterNames = uri.getQueryParameterNames();
-            for (String parameter : queryParameterNames) {
-                intentParams.put(parameter, uri.getQueryParameter(parameter));
+            if (uri != null) {
+                Set<String> queryParameterNames = uri.getQueryParameterNames();
+                for (String parameter : queryParameterNames) {
+                    intentParams.put(parameter, uri.getQueryParameter(parameter));
+                }
             }
         }
         return intentParams;

@@ -1,6 +1,8 @@
 package pl.edu.agh.marims.hub.fragment;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -23,6 +25,7 @@ import pl.edu.agh.marims.hub.activity.FileDetailActivity;
 import pl.edu.agh.marims.hub.activity.FileListActivity;
 import pl.edu.agh.marims.hub.models.ApplicationFile;
 import pl.edu.agh.marims.hub.models.Session;
+import pl.edu.agh.marims.hub.util.PackageUtil;
 
 /**
  * A fragment representing a single File detail screen.
@@ -127,7 +130,7 @@ public class FileDetailFragment extends Fragment {
         }
 
         @Override
-        public void onBindViewHolder(final ViewHolder holder, int position) {
+        public void onBindViewHolder(final ViewHolder holder, final int position) {
             holder.mItem = mValues.get(position);
 
             Date creationDate = new Date(mValues.get(position).getCreationTimestamp());
@@ -140,6 +143,12 @@ public class FileDetailFragment extends Fragment {
             holder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Activity activity = FileDetailFragment.this.getActivity();
+                    if (PackageUtil.isPackageInstalled(file, activity)) {
+                        Intent launchIntent = FileDetailFragment.this.getActivity().getPackageManager().getLaunchIntentForPackage(file.getPackageName());
+                        launchIntent.setData(Uri.parse("marims://runAppWith?sessionId=" + mValues.get(position).getId()));
+                        activity.startActivity(launchIntent);
+                    }
                 }
             });
         }

@@ -1,9 +1,6 @@
 package pl.edu.agh.marims.hub.activity;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -27,6 +24,7 @@ import pl.edu.agh.marims.hub.R;
 import pl.edu.agh.marims.hub.fragment.FileDetailFragment;
 import pl.edu.agh.marims.hub.models.ApplicationFile;
 import pl.edu.agh.marims.hub.network.MarimsApiClient;
+import pl.edu.agh.marims.hub.util.PackageUtil;
 import retrofit2.Callback;
 import retrofit2.Response;
 
@@ -42,19 +40,8 @@ public class FileDetailActivity extends AppCompatActivity {
     private ApplicationFile file;
     private boolean packageInstalled;
 
-    private boolean isPackageInstalled(ApplicationFile applicationFile, Context context) {
-        PackageManager pm = context.getPackageManager();
-        try {
-            PackageInfo packageInfo = pm.getPackageInfo(applicationFile.getPackageName(), PackageManager.GET_ACTIVITIES);
-            int applicationVersionCode = Integer.parseInt(applicationFile.getFileName().split("(\\()|(\\))")[1]);
-            return packageInfo.versionCode == applicationVersionCode;
-        } catch (PackageManager.NameNotFoundException e) {
-            return false;
-        }
-    }
-
     private void refreshFabDownloadVisibility() {
-        packageInstalled = isPackageInstalled(file, FileDetailActivity.this);
+        packageInstalled = PackageUtil.isPackageInstalled(file, FileDetailActivity.this);
         if (packageInstalled) {
             fabDownload.setVisibility(View.GONE);
         } else {
