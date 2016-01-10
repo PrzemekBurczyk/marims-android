@@ -62,6 +62,12 @@ public class App extends Application {
         dataListeners.clear();
     }
 
+    private Socket socket;
+
+    public Socket getSocket() {
+        return socket;
+    }
+
     private List<String> files = new ArrayList<>();
     private List<Session> sessions = new ArrayList<>();
 
@@ -70,7 +76,7 @@ public class App extends Application {
         super.onCreate();
 
         try {
-            Socket socket = IO.socket(Config.SERVER_URL + Config.SOCKET_IO_ENDPOINT);
+            socket = IO.socket(Config.SERVER_URL + Config.SOCKET_IO_ENDPOINT);
             socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {

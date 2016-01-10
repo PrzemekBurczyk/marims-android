@@ -3,16 +3,16 @@ package pl.edu.agh.marims.hub.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.ActionBar;
 import android.support.v4.app.NavUtils;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 
-import pl.edu.agh.marims.hub.fragment.FileDetailFragment;
+import pl.edu.agh.marims.hub.App;
 import pl.edu.agh.marims.hub.R;
+import pl.edu.agh.marims.hub.fragment.FileDetailFragment;
 
 /**
  * An activity representing a single File detail screen. This
@@ -29,12 +29,13 @@ public class FileDetailActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);
 
+        final String fileId = getIntent().getStringExtra(FileDetailFragment.ARG_ITEM_ID);
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own detail action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                ((App) getApplication()).getSocket().emit("createSession", fileId);
             }
         });
 
@@ -57,8 +58,7 @@ public class FileDetailActivity extends AppCompatActivity {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
             Bundle arguments = new Bundle();
-            arguments.putString(FileDetailFragment.ARG_ITEM_ID,
-                    getIntent().getStringExtra(FileDetailFragment.ARG_ITEM_ID));
+            arguments.putString(FileDetailFragment.ARG_ITEM_ID, fileId);
             FileDetailFragment fragment = new FileDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
