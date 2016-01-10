@@ -1,9 +1,9 @@
 package pl.edu.agh.marims.hub.network;
 
-import com.squareup.okhttp.RequestBody;
-
 import java.util.List;
 
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import pl.edu.agh.marims.hub.models.Session;
 import retrofit2.Call;
 import retrofit2.http.DELETE;
@@ -17,6 +17,9 @@ public interface MarimsService {
 
     @GET("/files")
     Call<List<String>> getFiles();
+
+    @GET("/files/{filename}")
+    Call<ResponseBody> getFile(@Path("filename") String filename);
 
     @Multipart
     @POST("/files")

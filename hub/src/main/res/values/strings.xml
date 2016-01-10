@@ -3,4 +3,5 @@
     <string name="title_file_detail">File Detail</string>
     <string name="session_creation_failed">Session creation failed</string>
     <string name="session_removal_failed">Session removal failed</string>
+    <string name="sd_card_error">External SD card not mounted</string>
 </resources>

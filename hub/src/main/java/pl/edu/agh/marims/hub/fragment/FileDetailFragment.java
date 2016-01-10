@@ -53,7 +53,6 @@ public class FileDetailFragment extends Fragment {
             FileDetailFragment.this.getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    System.out.println(sessions.size());
                     List<Session> fileSessions = new ArrayList<>();
                     for (Session session : sessions) {
                         if (file.toApplicationFileString().equals(session.getFile())) {
