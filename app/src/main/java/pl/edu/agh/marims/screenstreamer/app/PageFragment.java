@@ -60,6 +60,12 @@ public class PageFragment extends Fragment {
                 Log.d("TAG D", "Sample Log.d output");
             }
         });
+        view.findViewById(R.id.buttonLogw).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.w("TAG W", "Sample Log.w output");
+            }
+        });
         view.findViewById(R.id.buttonLoge).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
