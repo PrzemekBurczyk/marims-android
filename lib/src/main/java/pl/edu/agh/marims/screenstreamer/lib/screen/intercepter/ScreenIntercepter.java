@@ -7,9 +7,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import java.util.Map;
-
-import pl.edu.agh.marims.screenstreamer.lib.intent.IntentReader;
 import pl.edu.agh.marims.screenstreamer.lib.measurement.Measurer;
 import pl.edu.agh.marims.screenstreamer.lib.measurement.Statistics;
 import pl.edu.agh.marims.screenstreamer.lib.network.sender.AbstractSender;
@@ -23,30 +20,25 @@ public class ScreenIntercepter implements Intercepter {
     private static final int UDP_PORT = 6666;
     private static final int TCP_PORT = 7777;
     private static final int MEASURE_INTERVAL = 5000;
-    private static final String SESSION_ID_KEY = "sessionId";
     private StatisticsCallback statisticsCallback;
     private String sessionId = null;
     private String serverUrl = null;
     private Activity activity;
     private View rootView;
-    private Map<String, String> intentParams;
     private boolean initialized = false;
     private AbstractSender sender;
     private Measurer measurer;
     private Handler handler = new Handler();
 
-    public ScreenIntercepter(final Activity activity, final View view, String serverUrl) {
+    public ScreenIntercepter(final Activity activity, final View view, String serverUrl, String sessionId) {
         this.activity = activity;
         this.rootView = view;
         this.serverUrl = serverUrl;
-        this.intentParams = IntentReader.readIntentParams(activity.getIntent());
+        this.sessionId = sessionId;
 
-        if (!intentParams.isEmpty()) {
-            this.sessionId = intentParams.get(SESSION_ID_KEY);
-            if (sessionId != null) {
-                sender = new TcpSocketSender(this, serverUrl, TCP_PORT, this.sessionId);
-                measurer = new Measurer(sender);
-            }
+        if (sessionId != null) {
+            sender = new TcpSocketSender(this, serverUrl, TCP_PORT, this.sessionId);
+            measurer = new Measurer(sender);
         }
     }
 

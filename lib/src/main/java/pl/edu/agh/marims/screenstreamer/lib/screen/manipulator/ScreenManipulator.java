@@ -7,9 +7,6 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 
-import java.util.Map;
-
-import pl.edu.agh.marims.screenstreamer.lib.intent.IntentReader;
 import pl.edu.agh.marims.screenstreamer.lib.network.receiver.AbstractReceiver;
 import pl.edu.agh.marims.screenstreamer.lib.network.receiver.ReceiverCallback;
 import pl.edu.agh.marims.screenstreamer.lib.network.receiver.SocketIOReceiver;
@@ -19,26 +16,20 @@ import pl.edu.agh.marims.screenstreamer.lib.screen.manipulator.events.SpecialKey
 
 public class ScreenManipulator implements Manipulator {
 
-    private static final String SESSION_ID_KEY = "sessionId";
     final Instrumentation instrumentation = new Instrumentation();
     private final Activity activity;
     private final View view;
     private final String serverUrl;
-    private final Map<String, String> intentParams;
     private String sessionId;
     private AbstractReceiver receiver;
     private long lastDownUptime;
     private long systemBrowserDiff;
 
-    public ScreenManipulator(final Activity activity, final View view, String serverUrl) {
+    public ScreenManipulator(final Activity activity, final View view, String serverUrl, String sessionId) {
         this.activity = activity;
         this.view = view;
         this.serverUrl = serverUrl;
-        this.intentParams = IntentReader.readIntentParams(activity.getIntent());
-
-        if (!intentParams.isEmpty()) {
-            this.sessionId = intentParams.get(SESSION_ID_KEY);
-        }
+        this.sessionId = sessionId;
     }
 
     public void initialize() {
