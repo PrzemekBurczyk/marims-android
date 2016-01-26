@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <ImageView
         android:layout_width="match_parent"
@@ -12,9 +12,9 @@
         android:src="@drawable/background" />
 
     <ScrollView
+        android:id="@+id/content"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/content">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -35,12 +35,78 @@
 
                 <TextView
                     android:id="@+id/textView"
+                    style="?android:textAppearanceMedium"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="16dp"
                     android:lineSpacingMultiplier="1.2"
-                    style="?android:textAppearanceMedium" />
+                    android:padding="16dp" />
 
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:gravity="center">
+
+                <Button
+                    android:id="@+id/buttonSout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:text="System.out.println()" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:gravity="center">
+
+                <Button
+                    android:id="@+id/buttonLogd"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:text="Log.d()" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:gravity="center">
+
+                <Button
+                    android:id="@+id/buttonLoge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:text="Log.e()" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:gravity="center">
+
+                <Button
+                    android:id="@+id/buttonStackTrace"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:text="printStackTrace()" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:gravity="center">
+
+                <Button
+                    android:id="@+id/buttonException"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:text="throw new RuntimeException()" />
             </LinearLayout>
 
             <LinearLayout
@@ -50,10 +116,10 @@
                 android:gravity="center">
 
                 <CheckBox
+                    android:id="@+id/checkBox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Check box"
-                    android:id="@+id/checkBox" />
+                    android:text="Check box" />
             </LinearLayout>
 
             <LinearLayout
@@ -63,10 +129,10 @@
                 android:gravity="center">
 
                 <Switch
+                    android:id="@+id/switch1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Switch"
-                    android:id="@+id/switch1" />
+                    android:text="Switch" />
             </LinearLayout>
 
             <LinearLayout
@@ -76,9 +142,9 @@
                 android:gravity="center">
 
                 <DatePicker
+                    android:id="@+id/datePicker"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/datePicker" />
+                    android:layout_height="wrap_content" />
 
             </LinearLayout>
 
@@ -89,9 +155,9 @@
                 android:gravity="center">
 
                 <RatingBar
+                    android:id="@+id/ratingBar"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/ratingBar" />
+                    android:layout_height="wrap_content" />
             </LinearLayout>
 
             <LinearLayout
@@ -102,10 +168,10 @@
 
                 <EditText
                     android:layout_width="match_parent"
+                    android:layout_height="50dp"
                     android:background="#FFF"
                     android:textColor="#000"
-                    android:textCursorDrawable="@drawable/black_cursor"
-                    android:layout_height="50dp" />
+                    android:textCursorDrawable="@drawable/black_cursor" />
             </LinearLayout>
 
             <LinearLayout
@@ -115,37 +181,37 @@
                 android:gravity="center">
 
                 <Spinner
+                    android:id="@+id/spinner"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/spinner" />
+                    android:layout_height="wrap_content" />
             </LinearLayout>
 
             <LinearLayout
-                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="500dp"
                 android:layout_margin="10dp"
-                android:gravity="center">
+                android:gravity="center"
+                android:visibility="gone">
 
                 <WebView
+                    android:id="@+id/webView"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:id="@+id/webView" />
+                    android:layout_height="match_parent" />
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/listContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:layout_margin="10dp"
-                android:gravity="center">
+                android:gravity="center"
+                android:orientation="vertical">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="20sp"
-                    android:text="@string/lorem_ipsum" />
+                    android:text="@string/lorem_ipsum"
+                    android:textSize="20sp" />
 
             </LinearLayout>
 

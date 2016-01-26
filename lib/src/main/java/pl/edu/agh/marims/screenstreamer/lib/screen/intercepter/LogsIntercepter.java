@@ -102,9 +102,7 @@ public class LogsIntercepter implements Intercepter<String> {
     @Override
     public void start() {
         if (initialized) {
-            clearLogs();
             logcatReader = new BufferedReader(new InputStreamReader(logcatProcess.getInputStream()));
-
             sender.startSending();
         }
     }

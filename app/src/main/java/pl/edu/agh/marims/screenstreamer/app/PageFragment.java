@@ -3,6 +3,7 @@ package pl.edu.agh.marims.screenstreamer.app;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,14 +11,10 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-/**
- * Created by Przemek on 2014-06-08.
- */
 public class PageFragment extends Fragment {
 
     @Override
@@ -48,6 +45,41 @@ public class PageFragment extends Fragment {
                 }, 500);
                 ((TextView) view.findViewById(R.id.textView)).setText("LONG CLICK!");
                 return true;
+            }
+        });
+
+        view.findViewById(R.id.buttonSout).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.out.println("Sample System.out output");
+            }
+        });
+        view.findViewById(R.id.buttonLogd).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("TAG D", "Sample Log.d output");
+            }
+        });
+        view.findViewById(R.id.buttonLoge).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.e("TAG E", "Sample Log.e output");
+            }
+        });
+        view.findViewById(R.id.buttonStackTrace).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    throw new Exception("Sample handled exception");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        view.findViewById(R.id.buttonException).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                throw new RuntimeException("Sample Runtime exception");
             }
         });
 
