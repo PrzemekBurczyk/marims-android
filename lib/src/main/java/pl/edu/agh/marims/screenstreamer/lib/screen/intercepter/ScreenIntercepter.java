@@ -15,7 +15,7 @@ import pl.edu.agh.marims.screenstreamer.lib.network.sender.SenderType;
 import pl.edu.agh.marims.screenstreamer.lib.network.sender.TcpSocketSender;
 import pl.edu.agh.marims.screenstreamer.lib.network.sender.UdpSocketSender;
 
-public class ScreenIntercepter implements Intercepter {
+public class ScreenIntercepter implements Intercepter<Bitmap> {
     private static final String UPLOAD_ENDPOINT = "/upload";
     private static final int UDP_PORT = 6666;
     private static final int TCP_PORT = 7777;
@@ -42,10 +42,12 @@ public class ScreenIntercepter implements Intercepter {
         }
     }
 
+    @Override
     public void setStatisticsCallback(StatisticsCallback statisticsCallback) {
         this.statisticsCallback = statisticsCallback;
     }
 
+    @Override
     public void setSenderType(SenderType senderType) {
         if (sender != null) {
             sender.stopSending();
@@ -61,6 +63,8 @@ public class ScreenIntercepter implements Intercepter {
             case HTTP:
                 sender = new AsyncTaskSender(this, this.serverUrl + UPLOAD_ENDPOINT, this.sessionId);
                 break;
+            default:
+                throw new RuntimeException("Unimplemented sender type: " + senderType.toString());
         }
         measurer = new Measurer(sender);
         if (initialized) {
@@ -68,6 +72,7 @@ public class ScreenIntercepter implements Intercepter {
         }
     }
 
+    @Override
     public void initialize() {
         try {
             if (sessionId != null) {
@@ -84,7 +89,7 @@ public class ScreenIntercepter implements Intercepter {
     }
 
     @Override
-    public Bitmap takeScreenshot() {
+    public Bitmap intercept() {
         if (!initialized) {
             return null;
         }
@@ -93,7 +98,7 @@ public class ScreenIntercepter implements Intercepter {
     }
 
     @Override
-    public void intercept() {
+    public void start() {
         if (initialized) {
             handler.postDelayed(new Runnable() {
                 @Override
@@ -115,6 +120,7 @@ public class ScreenIntercepter implements Intercepter {
         }
     }
 
+    @Override
     public void stop() {
         if (initialized && sender != null) {
             initialized = false;

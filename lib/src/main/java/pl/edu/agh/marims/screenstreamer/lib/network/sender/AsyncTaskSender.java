@@ -16,11 +16,11 @@ import java.io.UnsupportedEncodingException;
 import pl.edu.agh.marims.screenstreamer.lib.convert.BitmapToBase64Converter;
 import pl.edu.agh.marims.screenstreamer.lib.screen.intercepter.Intercepter;
 
-public class AsyncTaskSender extends AbstractSender {
+public class AsyncTaskSender extends AbstractSender<Bitmap> {
 
     private BitmapToBase64Converter converter;
 
-    public AsyncTaskSender(Intercepter intercepter, String serverUrl, String sessionId) {
+    public AsyncTaskSender(Intercepter<Bitmap> intercepter, String serverUrl, String sessionId) {
         this.intercepter = intercepter;
         this.serverUrl = serverUrl;
         this.converter = new BitmapToBase64Converter();
@@ -34,7 +34,7 @@ public class AsyncTaskSender extends AbstractSender {
     }
 
     private void send() {
-        new Sender().execute(intercepter.takeScreenshot());
+        new Sender().execute(intercepter.intercept());
     }
 
     private class Sender extends AsyncTask<Bitmap, Void, Boolean> {

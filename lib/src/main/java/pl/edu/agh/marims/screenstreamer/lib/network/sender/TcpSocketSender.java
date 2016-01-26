@@ -17,7 +17,7 @@ import java.net.Socket;
 import pl.edu.agh.marims.screenstreamer.lib.convert.BitmapToBase64Converter;
 import pl.edu.agh.marims.screenstreamer.lib.screen.intercepter.Intercepter;
 
-public class TcpSocketSender extends AbstractSender {
+public class TcpSocketSender extends AbstractSender<Bitmap> {
 
     private static final boolean DEBUG = false;
 
@@ -26,7 +26,7 @@ public class TcpSocketSender extends AbstractSender {
     private SenderWorker worker;
     private int port;
 
-    public TcpSocketSender(Intercepter intercepter, String serverUrl, int port, String sessionId) {
+    public TcpSocketSender(Intercepter<Bitmap> intercepter, String serverUrl, int port, String sessionId) {
         this.intercepter = intercepter;
         this.serverUrl = serverUrl;
         this.converter = new BitmapToBase64Converter();
@@ -110,7 +110,7 @@ public class TcpSocketSender extends AbstractSender {
             mainLooper.post(new Runnable() {
                 @Override
                 public void run() {
-                    bitmap = intercepter.takeScreenshot();
+                    bitmap = intercepter.intercept();
                     if (bitmap != null) {
                         screenshotVersion++;
                     }

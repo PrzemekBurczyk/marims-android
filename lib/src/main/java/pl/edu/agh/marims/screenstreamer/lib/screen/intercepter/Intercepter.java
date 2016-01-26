@@ -1,10 +1,18 @@
 package pl.edu.agh.marims.screenstreamer.lib.screen.intercepter;
 
 
-import android.graphics.Bitmap;
+import pl.edu.agh.marims.screenstreamer.lib.network.sender.SenderType;
 
-public interface Intercepter {
-    public void intercept();
+public interface Intercepter<T> {
+    void setStatisticsCallback(StatisticsCallback statisticsCallback);
 
-    public Bitmap takeScreenshot();
+    void setSenderType(SenderType senderType);
+
+    void initialize();
+
+    void start();
+
+    void stop();
+
+    T intercept();
 }

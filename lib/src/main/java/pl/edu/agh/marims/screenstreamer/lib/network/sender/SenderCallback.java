@@ -1,13 +1,13 @@
 package pl.edu.agh.marims.screenstreamer.lib.network.sender;
 
 public interface SenderCallback {
-    public void onSuccess();
+    void onSuccess();
 
-    public void onFailure();
+    void onFailure();
 
-    public void onSend();
+    void onSend();
 
-    public void onStart();
+    void onStart();
 
-    public void onStop();
+    void onStop();
 }

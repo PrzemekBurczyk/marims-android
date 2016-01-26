@@ -21,7 +21,7 @@ import java.util.List;
 import pl.edu.agh.marims.screenstreamer.lib.convert.BitmapToBase64Converter;
 import pl.edu.agh.marims.screenstreamer.lib.screen.intercepter.Intercepter;
 
-public class UdpSocketSender extends AbstractSender {
+public class UdpSocketSender extends AbstractSender<Bitmap> {
 
     private static final boolean DEBUG = false;
 
@@ -30,7 +30,7 @@ public class UdpSocketSender extends AbstractSender {
     private SenderWorker worker;
     private int port;
 
-    public UdpSocketSender(Intercepter intercepter, String serverUrl, int port, String sessionId) {
+    public UdpSocketSender(Intercepter<Bitmap> intercepter, String serverUrl, int port, String sessionId) {
         this.intercepter = intercepter;
         this.serverUrl = serverUrl;
         this.converter = new BitmapToBase64Converter();
@@ -155,7 +155,7 @@ public class UdpSocketSender extends AbstractSender {
             mainLooper.post(new Runnable() {
                 @Override
                 public void run() {
-                    bitmap = intercepter.takeScreenshot();
+                    bitmap = intercepter.intercept();
                     if (bitmap != null) {
                         screenshotVersion++;
                     }
