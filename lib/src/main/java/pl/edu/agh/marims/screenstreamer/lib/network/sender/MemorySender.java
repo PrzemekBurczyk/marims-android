@@ -81,7 +81,7 @@ public class MemorySender extends WebsocketSender<MemoryStatus> {
             while (runSending) {
                 try {
                     send();
-                    Thread.sleep(10000);
+                    Thread.sleep(100);
                 } catch (JSONException | InterruptedException e) {
                     e.printStackTrace();
                 }

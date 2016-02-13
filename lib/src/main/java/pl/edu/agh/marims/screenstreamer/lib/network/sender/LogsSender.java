@@ -75,12 +75,7 @@ public class LogsSender extends WebsocketSender<String> {
         @Override
         public void run() {
             while (runSending) {
-                try {
-                    send();
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                send();
             }
         }
 
