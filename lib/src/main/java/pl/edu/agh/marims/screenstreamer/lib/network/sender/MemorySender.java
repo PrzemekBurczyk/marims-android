@@ -4,14 +4,18 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.net.URISyntaxException;
 
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
+import pl.edu.agh.marims.screenstreamer.lib.measurement.MemoryStatus;
 import pl.edu.agh.marims.screenstreamer.lib.screen.intercepter.Intercepter;
 
-public class LogsSender extends WebsocketSender<String> {
+public class MemorySender extends WebsocketSender<MemoryStatus> {
 
     private static final boolean DEBUG = false;
 
@@ -20,7 +24,7 @@ public class LogsSender extends WebsocketSender<String> {
     private SenderWorker worker;
     private Socket socket;
 
-    public LogsSender(Intercepter<String> intercepter, String serverUrl, String sessionId) {
+    public MemorySender(Intercepter<MemoryStatus> intercepter, String serverUrl, String sessionId) {
         this.intercepter = intercepter;
         this.serverUrl = serverUrl;
         this.sessionId = sessionId;
@@ -77,17 +81,23 @@ public class LogsSender extends WebsocketSender<String> {
             while (runSending) {
                 try {
                     send();
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
+                    Thread.sleep(10000);
+                } catch (JSONException | InterruptedException e) {
                     e.printStackTrace();
                 }
             }
         }
 
-        private void send() {
-            String log = intercepter.intercept();
-            if (log != null) {
-                socket.emit("logs", log);
+        private void send() throws JSONException {
+            MemoryStatus memoryStatus = intercepter.intercept();
+            if (memoryStatus != null) {
+                JSONObject memoryStatusJson = new JSONObject();
+                memoryStatusJson.put("max", memoryStatus.getMax());
+                memoryStatusJson.put("total", memoryStatus.getTotal());
+                memoryStatusJson.put("free", memoryStatus.getFree());
+                memoryStatusJson.put("used", memoryStatus.getUsed());
+                memoryStatusJson.put("timestamp", memoryStatus.getTimestamp());
+                socket.emit("memoryStatus", memoryStatusJson);
                 if (senderCallback != null) {
                     senderCallback.onSuccess();
                 }
