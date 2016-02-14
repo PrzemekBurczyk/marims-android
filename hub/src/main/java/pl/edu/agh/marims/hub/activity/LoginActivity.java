@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -143,6 +144,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ((App) getApplication()).disconnect();
+    }
 
     /**
      * Attempts to sign in or register the account specified by the login form.
@@ -206,8 +212,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     showProgress(false);
                     if (response.code() >= 200 && response.code() < 300) {
                         marimsApiClient.setLoggedUser(response.body());
-                        ((App) getApplication()).getSocket().connect();
-                        Toast.makeText(LoginActivity.this, "Success!!", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(LoginActivity.this, FileListActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_TASK_ON_HOME);
+                        ((App) getApplication()).connect();
+                        startActivity(intent);
                     } else if (response.code() == 400) {
                         mEmailView.setError(getString(R.string.error_email_in_use));
                         mEmailView.requestFocus();

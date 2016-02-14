@@ -79,10 +79,7 @@ public class App extends Application {
     private List<Session> sessions = new ArrayList<>();
     private MarimsApiClient marimsApiClient = MarimsApiClient.getInstance();
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-
+    public void connect() {
         try {
             socket = IO.socket(Config.SERVER_URL + Config.SOCKET_IO_ENDPOINT);
             socket.io().on(Manager.EVENT_TRANSPORT, new Emitter.Listener() {
@@ -159,6 +156,13 @@ public class App extends Application {
             socket.connect();
         } catch (URISyntaxException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void disconnect() {
+        if (socket != null) {
+            socket.disconnect();
+            socket.off();
         }
     }
 }
