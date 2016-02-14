@@ -4,8 +4,11 @@ import java.util.List;
 
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
+import pl.edu.agh.marims.hub.models.LoggedUser;
 import pl.edu.agh.marims.hub.models.Session;
+import pl.edu.agh.marims.hub.models.UserRequest;
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Multipart;
@@ -14,6 +17,15 @@ import retrofit2.http.Part;
 import retrofit2.http.Path;
 
 public interface MarimsService {
+
+    @POST("/register")
+    Call<LoggedUser> register(@Body UserRequest user);
+
+    @POST("/login")
+    Call<LoggedUser> logIn(@Body UserRequest user);
+
+    @POST("/logout")
+    Call<Void> logOut();
 
     @GET("/files")
     Call<List<String>> getFiles();
