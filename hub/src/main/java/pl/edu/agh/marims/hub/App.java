@@ -11,13 +11,19 @@ import org.json.JSONArray;
 import java.lang.reflect.Type;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import io.socket.client.IO;
+import io.socket.client.Manager;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
+import io.socket.engineio.client.Transport;
 import pl.edu.agh.marims.hub.models.ApplicationFile;
+import pl.edu.agh.marims.hub.models.LoggedUser;
 import pl.edu.agh.marims.hub.models.Session;
+import pl.edu.agh.marims.hub.network.MarimsApiClient;
 import pl.edu.agh.marims.hub.util.GsonUtil;
 
 public class App extends Application {
@@ -71,6 +77,7 @@ public class App extends Application {
 
     private List<ApplicationFile> files = new ArrayList<>();
     private List<Session> sessions = new ArrayList<>();
+    private MarimsApiClient marimsApiClient = MarimsApiClient.getInstance();
 
     @Override
     public void onCreate() {
@@ -78,6 +85,24 @@ public class App extends Application {
 
         try {
             socket = IO.socket(Config.SERVER_URL + Config.SOCKET_IO_ENDPOINT);
+            socket.io().on(Manager.EVENT_TRANSPORT, new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    Transport transport = (Transport) args[0];
+
+                    transport.on(Transport.EVENT_REQUEST_HEADERS, new Emitter.Listener() {
+                        @Override
+                        public void call(Object... args) {
+                            @SuppressWarnings("unchecked")
+                            Map<String, List<String>> headers = (Map<String, List<String>>) args[0];
+                            LoggedUser loggedUser = marimsApiClient.getLoggedUser();
+                            if (loggedUser != null && loggedUser.getToken() != null) {
+                                headers.put("Authorization", Collections.singletonList("Bearer " + loggedUser.getToken()));
+                            }
+                        }
+                    });
+                }
+            });
             socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
