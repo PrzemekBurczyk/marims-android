@@ -19,19 +19,20 @@ public class MarimsApiClient {
     private LoggedUser loggedUser;
 
     private MarimsApiClient() {
-        OkHttpClient client = new OkHttpClient();
-        client.interceptors().add(new Interceptor() {
-            @Override
-            public Response intercept(Chain chain) throws IOException {
-                Request request = chain.request();
-                if (loggedUser != null && loggedUser.getToken() != null) {
-                    request = request.newBuilder()
-                            .addHeader("Authorization", "Bearer " + loggedUser.getToken())
-                            .build();
-                }
-                return chain.proceed(request);
-            }
-        });
+        OkHttpClient client = new OkHttpClient.Builder()
+                .addInterceptor(new Interceptor() {
+                    @Override
+                    public Response intercept(Chain chain) throws IOException {
+                        Request request = chain.request();
+                        if (loggedUser != null && loggedUser.getToken() != null) {
+                            request = request.newBuilder()
+                                    .addHeader("Authorization", "Bearer " + loggedUser.getToken())
+                                    .build();
+                        }
+                        return chain.proceed(request);
+                    }
+                })
+                .build();
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Config.SERVER_URL)
