@@ -76,7 +76,7 @@ public class MemoryIntercepter implements Intercepter<MemoryStatus> {
 
     @Override
     public void start() {
-        if (initialized) {
+        if (initialized && sender != null) {
             sender.startSending();
         }
     }
