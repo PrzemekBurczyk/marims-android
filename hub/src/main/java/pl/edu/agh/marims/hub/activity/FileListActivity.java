@@ -20,6 +20,8 @@ import pl.edu.agh.marims.hub.App;
 import pl.edu.agh.marims.hub.R;
 import pl.edu.agh.marims.hub.fragment.FileDetailFragment;
 import pl.edu.agh.marims.hub.models.ApplicationFile;
+import pl.edu.agh.marims.hub.models.LoggedUser;
+import pl.edu.agh.marims.hub.models.User;
 import pl.edu.agh.marims.hub.network.MarimsApiClient;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -41,18 +43,55 @@ public class FileListActivity extends AppCompatActivity {
     private boolean mTwoPane;
     private SimpleItemRecyclerViewAdapter adapter;
 
+    private List<ApplicationFile> files;
+    private List<User> users;
+
     private App.DataListener dataListener = new App.BaseDataListener() {
         @Override
         public void onFilesUpdated(final List<ApplicationFile> files) {
+            FileListActivity.this.files = files;
             FileListActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    adapter.setItems(files);
-                    adapter.notifyDataSetChanged();
+                    refreshFilesList();
+                }
+            });
+        }
+
+        @Override
+        public void onUsersUpdated(List<User> users) {
+            FileListActivity.this.users = users;
+            FileListActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    refreshFilesList();
                 }
             });
         }
     };
+
+    private void refreshFilesList() {
+        LoggedUser loggedUser = MarimsApiClient.getInstance().getLoggedUser();
+        User currentUser = null;
+        if (users != null) {
+            for (User user : users) {
+                if (loggedUser.getId().equals(user.getId())) {
+                    currentUser = user;
+                    break;
+                }
+            }
+            if (currentUser != null && files != null) {
+                List<ApplicationFile> filesToDisplay = new ArrayList<>();
+                for (ApplicationFile file : files) {
+                    if (currentUser.getAuthorOfFiles().contains(file.toApplicationFileString()) || currentUser.getMemberOfFiles().contains(file.toApplicationFileString())) {
+                        filesToDisplay.add(file);
+                    }
+                }
+                adapter.setItems(filesToDisplay);
+                adapter.notifyDataSetChanged();
+            }
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

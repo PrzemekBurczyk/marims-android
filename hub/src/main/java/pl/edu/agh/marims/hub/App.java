@@ -23,6 +23,7 @@ import io.socket.engineio.client.Transport;
 import pl.edu.agh.marims.hub.models.ApplicationFile;
 import pl.edu.agh.marims.hub.models.LoggedUser;
 import pl.edu.agh.marims.hub.models.Session;
+import pl.edu.agh.marims.hub.models.User;
 import pl.edu.agh.marims.hub.network.MarimsApiClient;
 import pl.edu.agh.marims.hub.util.GsonUtil;
 
@@ -32,6 +33,8 @@ public class App extends Application {
         void onFilesUpdated(List<ApplicationFile> files);
 
         void onSessionsUpdated(List<Session> sessions);
+
+        void onUsersUpdated(List<User> users);
     }
 
     public static class BaseDataListener implements DataListener {
@@ -45,12 +48,20 @@ public class App extends Application {
         public void onSessionsUpdated(List<Session> sessions) {
 
         }
+
+        @Override
+        public void onUsersUpdated(List<User> users) {
+
+        }
     }
 
     private final Type stringListType = new TypeToken<List<String>>() {
     }.getType();
 
     private final Type sessionListType = new TypeToken<List<Session>>() {
+    }.getType();
+
+    private final Type userListType = new TypeToken<List<User>>() {
     }.getType();
 
     private List<DataListener> dataListeners = new ArrayList<>();
@@ -77,6 +88,7 @@ public class App extends Application {
 
     private List<ApplicationFile> files = new ArrayList<>();
     private List<Session> sessions = new ArrayList<>();
+    private List<User> users = new ArrayList<>();
     private MarimsApiClient marimsApiClient = MarimsApiClient.getInstance();
 
     public void connect() {
@@ -140,6 +152,15 @@ public class App extends Application {
                     sessions = GsonUtil.getGson().fromJson(sessionsJson.toString(), sessionListType);
                     for (DataListener dataListener : dataListeners) {
                         dataListener.onSessionsUpdated(sessions);
+                    }
+                }
+            }).on("users", new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    JSONArray usersJson = (JSONArray) args[0];
+                    users = GsonUtil.getGson().fromJson(usersJson.toString(), userListType);
+                    for (DataListener dataListener : dataListeners) {
+                        dataListener.onUsersUpdated(users);
                     }
                 }
             }).on("sessionCreationFailed", new Emitter.Listener() {
