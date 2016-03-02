@@ -117,8 +117,8 @@ public class FileListActivity extends AppCompatActivity {
                         for (String fileString : response.body()) {
                             files.add(new ApplicationFile(fileString));
                         }
-                        adapter.setItems(files);
-                        adapter.notifyDataSetChanged();
+                        FileListActivity.this.files = files;
+                        refreshFilesList();
                     }
 
                     @Override

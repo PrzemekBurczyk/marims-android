@@ -6,14 +6,16 @@ public class ApplicationFile implements Serializable {
 
     private String packageName;
     private String fileName;
+    private String userId;
 
     public ApplicationFile() {
     }
 
     public ApplicationFile(String applicationFileString) {
         String[] applicationFileData = applicationFileString.split("(\\[)|(\\])");
-        packageName = applicationFileData[1];
-        fileName = applicationFileData[2];
+        userId = applicationFileData[1];
+        packageName = applicationFileData[3];
+        fileName = applicationFileData[4];
     }
 
     public String getPackageName() {
@@ -32,8 +34,16 @@ public class ApplicationFile implements Serializable {
         this.fileName = fileName;
     }
 
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
     public String toApplicationFileString() {
-        return "[" + packageName + "]" + fileName;
+        return "[" + userId + "]" + "[" + packageName + "]" + fileName;
     }
 
     @Override
