@@ -1,0 +1,123 @@
+package pl.edu.agh.marims.lib.network.sender;
+
+import android.graphics.Bitmap;
+import android.os.Handler;
+import android.os.Looper;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.InetAddress;
+import java.net.Socket;
+
+import pl.edu.agh.marims.lib.convert.BitmapToBase64Converter;
+import pl.edu.agh.marims.lib.screen.intercepter.Intercepter;
+
+public class TcpSocketSender extends AbstractSender<Bitmap> {
+
+    private static final boolean DEBUG = false;
+
+    private Handler mainLooper = new Handler(Looper.getMainLooper());
+    private BitmapToBase64Converter converter;
+    private SenderWorker worker;
+    private int port;
+
+    public TcpSocketSender(Intercepter<Bitmap> intercepter, String serverUrl, int port, String sessionId) {
+        this.intercepter = intercepter;
+        this.serverUrl = serverUrl;
+        this.converter = new BitmapToBase64Converter();
+        this.port = port;
+        this.sessionId = sessionId;
+    }
+
+    @Override
+    public void startSending() {
+        super.startSending();
+        this.worker = new SenderWorker();
+        worker.start();
+    }
+
+    private class SenderWorker extends Thread {
+
+        private static final int MAX_SIZE = 65000;
+
+        private InetAddress address;
+        private Socket socket;
+        private Bitmap bitmap;
+        private long lastScreenshotVersion;
+        private long screenshotVersion = Long.MIN_VALUE;
+        private boolean loadInProgress = false;
+        private PrintWriter printWriter;
+
+        @Override
+        public void run() {
+            lastScreenshotVersion = screenshotVersion;
+            try {
+                String serverAddress = serverUrl.replaceFirst("http://", "").replaceFirst(":(\\d){1,5}", "");
+                address = InetAddress.getByName(serverAddress);
+                socket = new Socket(address, port);
+                printWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
+                while (runSending) {
+                    if (!loadInProgress) {
+                        try {
+                            send();
+                        } catch (IOException | InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        load();
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (socket != null && !socket.isClosed()) {
+                    try {
+                        socket.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+
+        private void send() throws IOException, InterruptedException {
+            if (lastScreenshotVersion != screenshotVersion) {
+                JSONObject jsonObject = new JSONObject();
+                try {
+                    jsonObject.put("sessionId", sessionId);
+                    jsonObject.put("screenWidth", bitmap.getWidth());
+                    jsonObject.put("screenHeight", bitmap.getHeight());
+                    jsonObject.put("image", converter.convert(bitmap));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                printWriter.println(jsonObject.toString());
+
+                if (senderCallback != null) {
+                    senderCallback.onSuccess();
+                }
+                lastScreenshotVersion = screenshotVersion;
+            }
+        }
+
+        private void load() {
+            loadInProgress = true;
+            mainLooper.post(new Runnable() {
+                @Override
+                public void run() {
+                    bitmap = intercepter.intercept();
+                    if (bitmap != null) {
+                        screenshotVersion++;
+                    }
+                    loadInProgress = false;
+                }
+            });
+        }
+    }
+
+}

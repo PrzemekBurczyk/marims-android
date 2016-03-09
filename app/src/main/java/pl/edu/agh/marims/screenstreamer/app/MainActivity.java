@@ -14,10 +14,10 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 
-import pl.edu.agh.marims.screenstreamer.lib.Marims;
-import pl.edu.agh.marims.screenstreamer.lib.measurement.Statistics;
-import pl.edu.agh.marims.screenstreamer.lib.network.sender.SenderType;
-import pl.edu.agh.marims.screenstreamer.lib.screen.intercepter.StatisticsCallback;
+import pl.edu.agh.marims.lib.Marims;
+import pl.edu.agh.marims.lib.measurement.Statistics;
+import pl.edu.agh.marims.lib.network.sender.SenderType;
+import pl.edu.agh.marims.lib.screen.intercepter.StatisticsCallback;
 
 public class MainActivity extends Activity {
 
