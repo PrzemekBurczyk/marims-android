@@ -9,8 +9,8 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 3
-        versionName "1.2"
+        versionCode 4
+        versionName "1.3"
     }
 }
 
@@ -20,16 +20,3 @@ dependencies {
         exclude group: 'org.json', module: 'json'
     }
 }
-
-task clearJar(type: Delete) {
-    delete 'build/outputs/marims.jar'
-}
-
-task makeJar(type: Copy) {
-    from('build/intermediates/bundles/release/')
-    into('build/outputs/')
-    include('classes.jar')
-    rename('classes.jar', 'marims.jar')
-}
-
-makeJar.dependsOn(clearJar, build)
