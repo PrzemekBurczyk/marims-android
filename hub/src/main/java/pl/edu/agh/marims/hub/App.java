@@ -68,6 +68,7 @@ public class App extends Application {
 
     public void addDataListener(DataListener dataListener) {
         dataListeners.add(dataListener);
+        dataListener.onUsersUpdated(users);
         dataListener.onFilesUpdated(files);
         dataListener.onSessionsUpdated(sessions);
     }
